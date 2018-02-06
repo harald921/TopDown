@@ -13,14 +13,14 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerOnlyCollision
+  - SolidLight
+  - SolidMedium
+  - SolidHeavy
+  - Pickup
+  - ProjectileSmall
+  - ProjectileLarge
+  - Player
   - 
   - 
   - 
