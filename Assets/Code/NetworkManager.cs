@@ -37,8 +37,8 @@ public class NetworkManager : Photon.MonoBehaviour
         PhotonNetwork.Instantiate("Networking/Player", Vector3.up, Quaternion.identity, 0);
     }
 
-    void OnPhotonPlayerConnected()
-    {
-        PhotonNetwork.Instantiate("Networking/Player", Vector3.up, Quaternion.identity, 0);
-    }
+    // void OnPhotonPlayerConnected()
+    // {
+    //     PhotonNetwork.Instantiate("Networking/Player", Vector3.up, Quaternion.identity, 0);
+    // }
 }

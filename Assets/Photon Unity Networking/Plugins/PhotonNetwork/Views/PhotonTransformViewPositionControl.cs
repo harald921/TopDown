@@ -118,7 +118,7 @@ public class PhotonTransformViewPositionControl
                     m_CurrentSpeed = Mathf.MoveTowards( m_CurrentSpeed, targetSpeed, Time.deltaTime * m_Model.InterpolateMoveTowardsAcceleration );
                 }
                 else
-                {
+                {   
                     m_CurrentSpeed = Mathf.MoveTowards( m_CurrentSpeed, targetSpeed, Time.deltaTime * m_Model.InterpolateMoveTowardsDeceleration );
                 }
 
@@ -132,6 +132,7 @@ public class PhotonTransformViewPositionControl
         {
             if( Vector3.Distance( currentPosition, GetNetworkPosition() ) > m_Model.TeleportIfDistanceGreaterThan )
             {
+                
                 currentPosition = GetNetworkPosition();
             }
         }

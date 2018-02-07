@@ -24,25 +24,29 @@ public class Player : Photon.MonoBehaviour
 
     Weapon _heldWeapon;
 
-
     void Awake()
     {
         _collider = GetComponent<Collider>();
         _rigidBody = GetComponent<Rigidbody>();    
         _mainCamera = Camera.main;
 
+        if (!photonView.isMine)
+            return; 
+
         FollowCamera.SetTarget(transform);
     }
 
     void Update()
     {
+        if (!photonView.isMine)
+            return;
+
         HandleMovement();
         HandleRotation();
 
         HandleShooting();
         HandleWeaponPickup();
     }
-
 
     void HandleWeaponPickup()
     {
@@ -161,6 +165,7 @@ public class Player : Photon.MonoBehaviour
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * _moveSpeed * Time.deltaTime;
         transform.position += movement;
+
 
         ResolveCollision(CheckCollision(_environmentCollisionRange));
     }
