@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Photon.MonoBehaviour
 {
     [SerializeField] Transform _rotationTransform;
     [SerializeField] Transform _handTransform;
@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
         _collider = GetComponent<Collider>();
         _rigidBody = GetComponent<Rigidbody>();    
         _mainCamera = Camera.main;
+
+        FollowCamera.SetTarget(transform);
     }
 
     void Update()
