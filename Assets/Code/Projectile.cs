@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : Photon.MonoBehaviour
 {
     [SerializeField] float _size = 0.1f;
     [SerializeField] LayerMask _layersThatStop;
@@ -13,21 +13,35 @@ public class Projectile : MonoBehaviour
     Rigidbody _rigidbody;
 
 
-    public void Initialize(float inLifetime, Vector3 inVelocity)
-    {
-        _lifetime = inLifetime;
-        _velocity = inVelocity;
-    }
-
     void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();    
     }
 
+    public void Initialize(float inLifetime, Vector3 inVelocity)
+    {
+        _lifetime = inLifetime;
+        _velocity = inVelocity;
+
+        photonView.RPC("NetInitialize", PhotonTargets.Others, inLifetime, inVelocity, transform.position);
+    }
+
+    [PunRPC]
+    void NetInitialize(float inLifetime, Vector3 inVelicity, Vector3 inOrigin, PhotonMessageInfo inInfo)
+    {
+        float netDelta = NetworkManager.CalculateNetDelta(inInfo.timestamp) * 3;
+
+        _lifetime = inLifetime - netDelta;         
+        _velocity = inVelicity;
+        transform.position = inOrigin + (_velocity * netDelta);
+
+        CheckCollision(inOrigin, netDelta);
+    }
+
     void Update()
     {
         Move();
-        CheckCollision();
+        CheckCollision(transform.position);
         ProgressLifetime();
     }
 
@@ -44,14 +58,12 @@ public class Projectile : MonoBehaviour
         transform.position += _velocity * Time.deltaTime;
     }
 
-    void CheckCollision()
+    void CheckCollision(Vector3 inOrigin, float inNetDelta = 0)
     {
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position, _size, _velocity.normalized, _velocity.magnitude * Time.deltaTime);
+        RaycastHit[] hits = Physics.SphereCastAll(inOrigin, _size, _velocity.normalized, _velocity.magnitude * (Time.deltaTime + inNetDelta));
         foreach (RaycastHit hit in hits)
-        {
             if (_layersThatStop.Contains(hit.collider.gameObject.layer))
                 OnCollision(hit.collider);
-        }
     }
 
     void OnCollision(Collider hitCollider)

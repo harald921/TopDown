@@ -6,8 +6,10 @@ public class NetworkManager : Photon.MonoBehaviour
 {
     void Awake()
     {
-        ConnectToServer();
+        PhotonNetwork.sendRate = 64;
+        PhotonNetwork.sendRateOnSerialize = 64;
 
+        ConnectToServer();
     }
 
     void ConnectToServer()
@@ -34,11 +36,11 @@ public class NetworkManager : Photon.MonoBehaviour
     void OnJoinedRoom()
     {
         Debug.Log("Connected to Room");
-        PhotonNetwork.Instantiate("Networking/Player", Vector3.up, Quaternion.identity, 0);
+        PhotonNetwork.Instantiate("Player", Vector3.up, Quaternion.identity, 0);
     }
 
-    // void OnPhotonPlayerConnected()
-    // {
-    //     PhotonNetwork.Instantiate("Networking/Player", Vector3.up, Quaternion.identity, 0);
-    // }
+    public static float CalculateNetDelta(double inTimestamp)
+    {
+        return (float)(PhotonNetwork.time - inTimestamp);
+    }
 }

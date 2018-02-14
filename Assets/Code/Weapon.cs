@@ -135,8 +135,7 @@ public class Weapon : MonoBehaviour
 
     void CreateProjectile()
     {
-        GameObject newProjectileGO = Instantiate(_projectileGO);
-        newProjectileGO.transform.position = _muzzleTransform.position;
+        GameObject newProjectileGO = PhotonNetwork.Instantiate(_projectileGO.name, _muzzleTransform.position, Quaternion.identity, 0);
 
         // Calculate new projectiles vector
         Vector3 newProjectileSpread = new Vector3(Random.Range(-_stats.projectileSpread, _stats.projectileSpread), 0, Random.Range(-_stats.projectileSpread, _stats.projectileSpread));

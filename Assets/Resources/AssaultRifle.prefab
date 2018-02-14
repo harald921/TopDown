@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4037923348010908}
-  m_Layer: 12
+  m_Layer: 16
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,8 @@ GameObject:
   - component: {fileID: 54699021677160256}
   - component: {fileID: 64445061814802406}
   - component: {fileID: 114388227583343760}
-  m_Layer: 0
+  - component: {fileID: 114252649325028110}
+  m_Layer: 16
   m_Name: AssaultRifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,7 +129,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!64 &64445061814802406
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -143,6 +144,32 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 641c99dcb785a8d4c8a6067a95531a67, type: 3}
+--- !u!114 &114252649325028110
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1794909459160882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerId: 0
+  group: 0
+  OwnerShipWasTransfered: 0
+  prefixBackup: -1
+  synchronization: 0
+  onSerializeTransformOption: 3
+  onSerializeRigidBodyOption: 2
+  ownershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  ObservedComponentsFoldoutOpen: 1
+  viewIdField: 0
+  instantiationId: -1
+  currentMasterID: -1
+  isRuntimeInstantiated: 0
 --- !u!114 &114388227583343760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -159,14 +186,14 @@ MonoBehaviour:
     reload: {fileID: 0}
   _firingMechanism: 0
   _stats:
-    fireRate: 20
+    fireRate: 15
     projectileSpread: 0.05
     velocityInconsistensy: 0.05
     damageMin: 1
     damageMax: 1
     projectilesPerShot: 1
-    projectileSpeed: 40
-    projectileLifeTime: 4
+    projectileSpeed: 35
+    projectileLifeTime: 3
     maxAmmo: 10
     reloadSpeed: 1
   _projectileGO: {fileID: 1932406060625188, guid: 0bf01dd63f3c8a74198e3d0891dc27c7,

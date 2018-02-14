@@ -48,6 +48,7 @@ public class Player : Photon.MonoBehaviour
         HandleWeaponPickup();
     }
 
+
     void HandleWeaponPickup()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -123,7 +124,7 @@ public class Player : Photon.MonoBehaviour
         {
             Weapon hitWeapon = hitCollider.GetComponent<Weapon>();
             if (hitWeapon)
-                if (!hitWeapon.transform.parent)
+                if (!hitWeapon.transform.parent.GetComponent<Player>())
                     nearbyWeapons.Add(hitWeapon);
         }
 
@@ -152,27 +153,30 @@ public class Player : Photon.MonoBehaviour
 
     Quaternion CalculateTargetRotation()
     {
+        return Quaternion.LookRotation(GetAimTarget() - transform.position);
+    }
+
+    Vector3 GetAimTarget()
+    {
         Vector3 aimTarget = Input.mousePosition;
         aimTarget.z = Mathf.Abs(Camera.main.transform.position.y - transform.position.y);
         aimTarget = Camera.main.ScreenToWorldPoint(aimTarget);
         aimTarget = new Vector3(aimTarget.x, transform.localScale.y, aimTarget.z);
 
-        return Quaternion.LookRotation(aimTarget - transform.position);
+        return aimTarget;
     }
-
 
     void HandleMovement()
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * _moveSpeed * Time.deltaTime;
         transform.position += movement;
 
-
         ResolveCollision(CheckCollision(_environmentCollisionRange));
     }
 
     Collider[] CheckCollision(float inRange)
     {
-        return Physics.OverlapSphere(transform.position - Vector3.up * 1, inRange);
+        return Physics.OverlapSphere(transform.position - Vector3.up, inRange);
     }
 
     void ResolveCollision(Collider[] hitColliders)
