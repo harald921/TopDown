@@ -45,4 +45,7 @@ MonoBehaviour:
   - NetInitialize
   - SpawnGO
   - NetSetParent
+  - DropWeapon
+  - ThrowWeapon
+  - PickupWeapon
   DisableAutoOpenWizard: 1

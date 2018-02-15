@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4037923348010908}
-  m_Layer: 16
+  m_Layer: 12
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 64445061814802406}
   - component: {fileID: 114388227583343760}
   - component: {fileID: 114252649325028110}
-  m_Layer: 16
+  m_Layer: 12
   m_Name: AssaultRifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

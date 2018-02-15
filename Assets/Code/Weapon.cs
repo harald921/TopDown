@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+public class Weapon : Photon.MonoBehaviour
 {
     [System.Serializable]
     public struct Sounds

@@ -57,46 +57,48 @@ public class Player : Photon.MonoBehaviour
             if (nearbyWeapon)
             {
                 if (_heldWeapon)
-                    ThrowWeapon(200.0f);
+                    photonView.RPC("ThrowWeapon", PhotonTargets.All, ((CalculateTargetRotation() * Vector3.forward) * 600.0f));
 
-                PickupWeapon(nearbyWeapon);
+                photonView.RPC("PickupWeapon", PhotonTargets.All, nearbyWeapon.photonView.viewID);
             }
         }
 
         if (Input.GetKeyDown(KeyCode.G))
             if (_heldWeapon)
-                ThrowWeapon(600.0f);
+                photonView.RPC("ThrowWeapon", PhotonTargets.All, ((CalculateTargetRotation() * Vector3.forward) * 600.0f));
     }
 
-    void PickupWeapon(Weapon inWeaponToPickup)
+    [PunRPC]
+    void PickupWeapon(int inViewID)
     {
-        inWeaponToPickup.transform.SetParent(_handTransform);
-        inWeaponToPickup.transform.forward = _handTransform.forward;
-        inWeaponToPickup.transform.localPosition = Vector3.zero;
+        Weapon weaponToPickup = PhotonView.Find(inViewID).GetComponent<Weapon>();
+        weaponToPickup.transform.SetParent(_handTransform);
+        weaponToPickup.transform.forward = _handTransform.forward;
+        weaponToPickup.transform.localPosition = Vector3.zero;
 
-        inWeaponToPickup.GetComponent<Rigidbody>().isKinematic = true;
+        weaponToPickup.GetComponent<Rigidbody>().isKinematic = true;
 
-        _heldWeapon = inWeaponToPickup;
+        _heldWeapon = weaponToPickup;
     }
 
-    Weapon DropWeapon()
+    void DropWeapon()
     {
-        Weapon weaponToDrop = _heldWeapon;
-
         _heldWeapon.GetComponent<Rigidbody>().isKinematic = false;
         _heldWeapon.transform.SetParent(null);
         _heldWeapon.ReleaseTrigger();
         _heldWeapon = null;
-
-        return weaponToDrop;
     }
 
-    void ThrowWeapon(float inStrength)
+    [PunRPC]
+    void ThrowWeapon(Vector3 inVelocity)
     {
-        Weapon droppedWeapon = DropWeapon();
+        Weapon weaponToThrow = _heldWeapon;
 
-        droppedWeapon.GetComponent<Rigidbody>().AddForce((CalculateTargetRotation() * Vector3.forward) * inStrength);
+        DropWeapon();
+
+        weaponToThrow.GetComponent<Rigidbody>().AddForce(inVelocity);
     }
+
 
     Weapon GetClosestWeapon()
     {
@@ -124,8 +126,13 @@ public class Player : Photon.MonoBehaviour
         {
             Weapon hitWeapon = hitCollider.GetComponent<Weapon>();
             if (hitWeapon)
-                if (!hitWeapon.transform.parent.GetComponent<Player>())
+            {
+                if (!hitWeapon.transform.parent)
                     nearbyWeapons.Add(hitWeapon);
+
+                else if (hitWeapon.transform.parent.GetComponent<WeaponSpawner>())
+                    nearbyWeapons.Add(hitWeapon);
+            }
         }
 
         return nearbyWeapons;
