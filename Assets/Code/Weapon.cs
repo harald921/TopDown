@@ -148,7 +148,10 @@ public class Weapon : Photon.MonoBehaviour
     void PlayGunshotSound()
     {
         AudioSource audioSource = GetComponent<AudioSource>();
-        if (audioSource.isPlaying) audioSource.Stop();
+
+        if (audioSource.isPlaying)
+            audioSource.Stop();
+
         audioSource.pitch = Random.Range(0.98f, 1.02f);
         audioSource.PlayOneShot(_sounds.fire);
     }

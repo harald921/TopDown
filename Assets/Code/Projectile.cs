@@ -68,6 +68,13 @@ public class Projectile : Photon.MonoBehaviour
 
     void OnCollision(Collider hitCollider)
     {
+        Player hitPlayer = hitCollider.GetComponent<Player>();
+        if (hitPlayer)
+        {
+            hitPlayer.photonView.RPC("ModifyHealth", PhotonTargets.All, -10);
+            Debug.Log("Temporary debug damage");
+        }
+
         Destroy(gameObject);
     }
 }

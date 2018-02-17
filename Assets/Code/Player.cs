@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Player : Photon.MonoBehaviour
 {
     [SerializeField] Transform _rotationTransform;
     [SerializeField] Transform _handTransform;
+
+    [Header("Health")]
+    [SerializeField] int _maxHealth = 100;
 
     [Header("Movement")]
     [SerializeField] float _moveSpeed = 2.5f;
@@ -18,14 +22,24 @@ public class Player : Photon.MonoBehaviour
     [SerializeField] float _environmentCollisionRange = 1.0f;
     [SerializeField] float _weaponPickupRadius = 3.0f;
 
+    [Header("Team")]
+    [SerializeField] int _team = 0;
+
+    int _currentHealth;
+
     Rigidbody _rigidBody;
     Camera _mainCamera;
     Collider _collider;
-
     Weapon _heldWeapon;
+
+    public event Action<int> OnHurt;
+    public event Action<int> OnHealed;
+    public event Action OnDeath;
 
     void Awake()
     {
+        _currentHealth = _maxHealth;
+
         _collider = GetComponent<Collider>();
         _rigidBody = GetComponent<Rigidbody>();    
         _mainCamera = Camera.main;
@@ -40,6 +54,9 @@ public class Player : Photon.MonoBehaviour
     {
         if (!photonView.isMine)
             return;
+
+        if (Input.GetKeyDown(KeyCode.E))
+            ModifyHealth(-10);
 
         HandleMovement();
         HandleRotation();
@@ -57,7 +74,7 @@ public class Player : Photon.MonoBehaviour
             if (nearbyWeapon)
             {
                 if (_heldWeapon)
-                    photonView.RPC("ThrowWeapon", PhotonTargets.All, ((CalculateTargetRotation() * Vector3.forward) * 600.0f));
+                    photonView.RPC("DropWeapon", PhotonTargets.All);
 
                 photonView.RPC("PickupWeapon", PhotonTargets.All, nearbyWeapon.photonView.viewID);
             }
@@ -65,7 +82,7 @@ public class Player : Photon.MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
             if (_heldWeapon)
-                photonView.RPC("ThrowWeapon", PhotonTargets.All, ((CalculateTargetRotation() * Vector3.forward) * 600.0f));
+                photonView.RPC("DropWeapon", PhotonTargets.All);
     }
 
     [PunRPC]
@@ -81,24 +98,17 @@ public class Player : Photon.MonoBehaviour
         _heldWeapon = weaponToPickup;
     }
 
+    [PunRPC]
     void DropWeapon()
     {
-        _heldWeapon.GetComponent<Rigidbody>().isKinematic = false;
+        Rigidbody weaponRigidbody = _heldWeapon.GetComponent<Rigidbody>();
+        weaponRigidbody.isKinematic = false;
+        weaponRigidbody.AddTorque(_heldWeapon.transform.forward * 4.0f);
+
         _heldWeapon.transform.SetParent(null);
         _heldWeapon.ReleaseTrigger();
         _heldWeapon = null;
     }
-
-    [PunRPC]
-    void ThrowWeapon(Vector3 inVelocity)
-    {
-        Weapon weaponToThrow = _heldWeapon;
-
-        DropWeapon();
-
-        weaponToThrow.GetComponent<Rigidbody>().AddForce(inVelocity);
-    }
-
 
     Weapon GetClosestWeapon()
     {
@@ -157,7 +167,6 @@ public class Player : Photon.MonoBehaviour
         _rotationTransform.rotation = Quaternion.RotateTowards(_rotationTransform.rotation, CalculateTargetRotation(), _rotationSpeed * Time.deltaTime);
     }
 
-
     Quaternion CalculateTargetRotation()
     {
         return Quaternion.LookRotation(GetAimTarget() - transform.position);
@@ -202,5 +211,27 @@ public class Player : Photon.MonoBehaviour
             if (Physics.ComputePenetration(_collider, transform.position, transform.rotation, hitCollider, hitCollider.transform.position, hitCollider.transform.rotation, out correctionDir, out correctionDist))
                 transform.position += correctionDir * correctionDist;
         }
+    }
+
+    [PunRPC]
+    void ModifyHealth(int inChange)
+    {
+        _currentHealth += inChange;
+
+        if (inChange < 0)
+        {
+            if (OnHurt != null)
+                OnHurt(inChange);
+        }
+
+        else
+        {
+            if (OnHealed != null)
+                OnHealed(inChange);
+        }
+
+        if (_currentHealth <= 0)
+            if (OnDeath != null)
+                OnDeath();
     }
 }
