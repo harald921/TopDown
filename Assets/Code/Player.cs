@@ -32,9 +32,12 @@ public class Player : Photon.MonoBehaviour
     Collider _collider;
     Weapon _heldWeapon;
 
+    public int team { get { return _team; } }
+
     public event Action<int> OnHurt;
     public event Action<int> OnHealed;
     public event Action OnDeath;
+
 
     void Awake()
     {
@@ -48,6 +51,9 @@ public class Player : Photon.MonoBehaviour
             return; 
 
         FollowCamera.SetTarget(transform);
+
+        OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
+        OnDeath += () => { if (_heldWeapon) Debug.Log("Facking banan"); };
     }
 
     void Update()
@@ -55,7 +61,7 @@ public class Player : Photon.MonoBehaviour
         if (!photonView.isMine)
             return;
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.I))
             ModifyHealth(-10);
 
         HandleMovement();
