@@ -72,7 +72,7 @@ LightmapSettings:
     m_FinalGatherRayCount: 256
     m_ReflectionCompression: 0
     m_MixedBakeMode: 2
-    m_BakeBackend: 0
+    m_BakeBackend: 1
     m_PVRSampling: 1
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
@@ -448,11 +448,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ad218f0e96d25545a6e9b0314e61531, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _falloffSpeed: 3
+  _maxYawPitchRoll: {x: 2, y: 2, z: 2}
+  _falloffSpeed: 2
   _falloffExponent: 3
-  _maxYawPitchRoll: {x: 5, y: 5, z: 5}
   _shakeStrengthMultiplier: 3
-  _shakeFrequency: 3
+  _shakeFrequency: 13
 --- !u!1001 &715493806
 Prefab:
   m_ObjectHideFlags: 0
