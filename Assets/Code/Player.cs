@@ -222,7 +222,9 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     void ModifyHealth(int inChange)
     {
+        int previousHealth = _currentHealth;
         _currentHealth += inChange;
+        Debug.Log(_currentHealth);
 
         if (inChange < 0)
         {
@@ -236,8 +238,11 @@ public class Player : Photon.MonoBehaviour
                 OnHealed(inChange);
         }
 
-        if (_currentHealth <= 0)
+        if (_currentHealth <= 0 && previousHealth > 0)
             if (OnDeath != null)
+            {
                 OnDeath();
+                _currentHealth = _maxHealth;
+            }
     }
 }

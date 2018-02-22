@@ -282,6 +282,7 @@ GameObject:
   - component: {fileID: 703215726}
   - component: {fileID: 703215727}
   - component: {fileID: 703215728}
+  - component: {fileID: 703215729}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -436,6 +437,22 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 0
+--- !u!114 &703215729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 703215721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ad218f0e96d25545a6e9b0314e61531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _falloffSpeed: 3
+  _falloffExponent: 3
+  _maxYawPitchRoll: {x: 5, y: 5, z: 5}
+  _shakeStrengthMultiplier: 3
+  _shakeFrequency: 3
 --- !u!1001 &715493806
 Prefab:
   m_ObjectHideFlags: 0

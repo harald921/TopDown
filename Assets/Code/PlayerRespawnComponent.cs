@@ -44,7 +44,6 @@ public class PlayerRespawnComponent : MonoBehaviour
     void RespawnPlayer()
     {
         transform.position = GetRandomSpawnPosition();
-        _player.photonView.RPC("ModifyHealth", PhotonTargets.All, 100);
         _player.enabled = true;
         _meshRenderer.enabled = true;
     }
