@@ -277,7 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _color: {r: 1, g: 0, b: 0, a: 1}
-  _fadeSpeed: 3
+  _fadeSpeed: 9
 --- !u!114 &114217408544245808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -424,6 +424,11 @@ MonoBehaviour:
   _rotationTransform: {fileID: 4831765480635312}
   _handTransform: {fileID: 4542863078914268}
   _maxHealth: 100
+  _healthRegenRate: 9
+  _healthRegenDelay: 10
+  _maxShield: 70
+  _shieldRegenDelay: 4.25
+  _shieldRegenRate: 40
   _moveSpeed: 10
   _rotationSpeed: 1000
   _collidesWith:

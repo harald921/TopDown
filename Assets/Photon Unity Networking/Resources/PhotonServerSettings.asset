@@ -49,4 +49,5 @@ MonoBehaviour:
   - ThrowWeapon
   - PickupWeapon
   - ModifyHealth
+  - DealDamage
   DisableAutoOpenWizard: 1

@@ -43,9 +43,13 @@ public class Player : Photon.MonoBehaviour
 
     public int team { get { return _team; } }
 
-    public event Action<float> OnHealthDamage;
-    public event Action<float> OnShieldDamage;
-    public event Action<float> OnShieldHealed;
+    public delegate void HealthChangeHandler(float inPreviousHealth, float inCurrentHealth);
+    public event HealthChangeHandler OnHealthChange;
+    public delegate void ShieldChangeHandler(float inPreviousShield, float inCurrentShield);
+    public event ShieldChangeHandler OnShieldChange;
+
+    public event Action OnHealthDamage;
+    public event Action OnShieldDamage;
     public event Action OnShieldBreak;
     public event Action OnDeath;
 
@@ -58,14 +62,13 @@ public class Player : Photon.MonoBehaviour
         _collider = GetComponent<Collider>();
 
         if (!photonView.isMine)
-            return; 
+            return;
 
         FollowCamera.SetTarget(transform);
 
-        OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
+        GUIManager.instance.shieldBar.Initialize(this, _maxShield);
 
-        OnHealthDamage += (o) => { _healthRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _healthRegenHandle, SingletonBehavior.Overwrite); };
-        OnShieldDamage += (o) => { _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleShieldRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite); };
+        SubscribeEvents();
     }
 
     void Update()
@@ -83,6 +86,34 @@ public class Player : Photon.MonoBehaviour
         HandleWeaponPickup();
     }
 
+
+    void SubscribeEvents()
+    {
+        OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
+
+        OnHealthChange += (float inPreviousHealth, float inCurrentHealth) =>
+        {
+            if (inPreviousHealth > inCurrentHealth)
+                if (OnHealthDamage != null)
+                    OnHealthDamage();
+        };
+
+        OnShieldChange += (float inPreviousShield, float inCurrentShield) =>
+        {
+            if (inPreviousShield > inCurrentShield)
+                if (OnShieldDamage != null)
+                    OnShieldDamage();
+        };
+
+        OnHealthDamage += () => { _healthRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _healthRegenHandle, SingletonBehavior.Overwrite);
+                                  _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _shieldRegenHandle, SingletonBehaviour.OverWrite); };
+
+        OnShieldDamage += () => { _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleShieldRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite); };
+
+        OnHealthDamage += () => { FindObjectOfType<CameraShaker >().AddTrauma(Vector3.one * 0.5f); }; // TODO: Use manager
+        OnHealthDamage += () => { FindObjectOfType<CameraPuncher>().AddTrauma(0.5f);               }; // TODO: Use manager
+        OnShieldDamage += () => { FindObjectOfType<CameraShaker >().AddTrauma(Vector3.one * 0.4f); }; // TODO: Use manager
+    }
 
     void HandleWeaponPickup()
     {
@@ -244,13 +275,14 @@ public class Player : Photon.MonoBehaviour
             float previousShield = _currentShield;
             _currentShield -= remainingDamage;
 
-            OnShieldDamage(remainingDamage); // TODO: Restart recharge shield coroutine
-
             if (_currentShield <= 0)
                 if (OnShieldBreak != null)
                     OnShieldBreak();
 
             Mathf.Clamp(_currentShield, 0, _maxShield);
+
+            OnShieldChange(previousShield, _currentShield);
+
             remainingDamage -= previousShield;
         }
 
@@ -263,13 +295,13 @@ public class Player : Photon.MonoBehaviour
             float previousHealth = _currentHealth;
             _currentHealth -= remainingDamage;
 
-            OnHealthDamage(remainingDamage); // TODO: Restart regenerate health coroutine
-
             if (_currentHealth <= 0)
                 if (OnDeath != null)
                     OnDeath();
 
             Mathf.Clamp(_currentHealth, 0, _maxHealth);
+
+            OnHealthChange(previousHealth, _currentHealth); 
         }
     }
 
@@ -278,7 +310,15 @@ public class Player : Photon.MonoBehaviour
         yield return Timing.WaitForSeconds(_healthRegenDelay);
 
         while (_currentHealth < _maxHealth)
+        {
+            float previousHealth = _currentHealth;
             _currentHealth += _healthRegenRate * Time.deltaTime;
+
+            if (OnHealthChange != null)
+                OnHealthChange(previousHealth, _currentHealth);
+
+            yield return Timing.WaitForOneFrame;
+        }
 
         _currentHealth = _maxHealth;
     }
@@ -288,7 +328,15 @@ public class Player : Photon.MonoBehaviour
         yield return Timing.WaitForSeconds(_shieldRegenDelay);
 
         while (_currentShield < _maxShield)
+        {
+            float previousShield = _currentShield;
             _currentShield += _shieldRegenRate * Time.deltaTime;
+
+            if (OnShieldChange != null)
+                OnShieldChange(previousShield, _currentShield);
+
+            yield return Timing.WaitForOneFrame;
+        }
 
         _currentShield = _maxShield;
     }
