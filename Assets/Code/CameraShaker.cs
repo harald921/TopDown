@@ -7,8 +7,6 @@ public class CameraShaker : MonoBehaviour
     static CameraShaker _instance;
     public static CameraShaker instance;
 
-    int _seed = 0;
-
     [SerializeField] Vector3 _maxYawPitchRoll = new Vector3(2, 2, 2);
     [SerializeField] float _falloffSpeed = 2.0f;
     [SerializeField] int _falloffExponent = 3;
@@ -74,9 +72,9 @@ public class CameraShaker : MonoBehaviour
     {
         return new Vector3()
         {
-            x = _maxYawPitchRoll.x * inShakeAmount.x * GetShakePerlin(_seed),
-            y = _maxYawPitchRoll.y * inShakeAmount.y * GetShakePerlin(_seed + 1),
-            z = _maxYawPitchRoll.z * inShakeAmount.z * GetShakePerlin(_seed + 2)
+            x = _maxYawPitchRoll.x * inShakeAmount.x * GetShakePerlin(0),
+            y = _maxYawPitchRoll.y * inShakeAmount.y * GetShakePerlin(1),
+            z = _maxYawPitchRoll.z * inShakeAmount.z * GetShakePerlin(2)
         };
     }
 
