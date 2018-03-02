@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using MEC;
 
 public class Player : Photon.MonoBehaviour
 {
@@ -9,7 +10,13 @@ public class Player : Photon.MonoBehaviour
     [SerializeField] Transform _handTransform;
 
     [Header("Health")]
-    [SerializeField] int _maxHealth = 100;
+    [SerializeField] float _maxHealth        = 45.0f;
+    [SerializeField] float _healthRegenRate  = 9.0f;
+    [SerializeField] float _healthRegenDelay = 10.0f;
+
+    [SerializeField] float _maxShield        = 70.0f;
+    [SerializeField] float _shieldRegenDelay = 4.25f;
+    [SerializeField] float _shieldRegenRate  = 40.0f;
 
     [Header("Movement")]
     [SerializeField] float _moveSpeed = 2.5f;
@@ -25,27 +32,30 @@ public class Player : Photon.MonoBehaviour
     [Header("Team")]
     [SerializeField] int _team = 0;
 
-    int _currentHealth;
+    float _currentHealth;
+    float _currentShield;
 
-    Rigidbody _rigidBody;
-    Camera _mainCamera;
     Collider _collider;
     Weapon _heldWeapon;
 
+    CoroutineHandle _healthRegenHandle;
+    CoroutineHandle _shieldRegenHandle;
+
     public int team { get { return _team; } }
 
-    public event Action<int> OnHurt;
-    public event Action<int> OnHealed;
+    public event Action<float> OnHealthDamage;
+    public event Action<float> OnShieldDamage;
+    public event Action<float> OnShieldHealed;
+    public event Action OnShieldBreak;
     public event Action OnDeath;
 
 
     void Awake()
     {
         _currentHealth = _maxHealth;
+        _currentShield = _maxShield;
 
         _collider = GetComponent<Collider>();
-        _rigidBody = GetComponent<Rigidbody>();    
-        _mainCamera = Camera.main;
 
         if (!photonView.isMine)
             return; 
@@ -53,7 +63,9 @@ public class Player : Photon.MonoBehaviour
         FollowCamera.SetTarget(transform);
 
         OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
-        OnDeath += () => { if (_heldWeapon) Debug.Log("Facking banan"); };
+
+        OnHealthDamage += (o) => { _healthRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _healthRegenHandle, SingletonBehavior.Overwrite); };
+        OnShieldDamage += (o) => { _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleShieldRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite); };
     }
 
     void Update()
@@ -62,7 +74,7 @@ public class Player : Photon.MonoBehaviour
             return;
 
         if (Input.GetKeyDown(KeyCode.I))
-            ModifyHealth(-10);
+            DealDamage(10);
 
         HandleMovement();
         HandleRotation();
@@ -208,41 +220,76 @@ public class Player : Photon.MonoBehaviour
             if (!_collidesWith.Contains(hitCollider.gameObject.layer))
                 continue;
 
-            Vector3 otherPos = hitCollider.transform.position;
-            Quaternion otherRot = hitCollider.transform.rotation;
-
             Vector3 correctionDir;
             float correctionDist;
 
+            // Calculate and perform required movement to resolve collision
             if (Physics.ComputePenetration(_collider, transform.position, transform.rotation, hitCollider, hitCollider.transform.position, hitCollider.transform.rotation, out correctionDir, out correctionDist))
                 transform.position += correctionDir * correctionDist;
         }
     }
 
     [PunRPC]
-    void ModifyHealth(int inChange)
+    void DealDamage(int inDamage)
     {
-        int previousHealth = _currentHealth;
-        _currentHealth += inChange;
-        Debug.Log(_currentHealth);
+        // Return if negative damage is recieved
+        if (inDamage <= 0)
+            return;
 
-        if (inChange < 0)
+        float remainingDamage = inDamage;
+
+        // Shield damage if shield is up
+        if (_currentShield > 0)
         {
-            if (OnHurt != null)
-                OnHurt(inChange);
+            float previousShield = _currentShield;
+            _currentShield -= remainingDamage;
+
+            OnShieldDamage(remainingDamage); // TODO: Restart recharge shield coroutine
+
+            if (_currentShield <= 0)
+                if (OnShieldBreak != null)
+                    OnShieldBreak();
+
+            Mathf.Clamp(_currentShield, 0, _maxShield);
+            remainingDamage -= previousShield;
         }
 
-        else
-        {
-            if (OnHealed != null)
-                OnHealed(inChange);
-        }
+        if (remainingDamage <= 0)
+            return;
 
-        if (_currentHealth <= 0 && previousHealth > 0)
-            if (OnDeath != null)
-            {
-                OnDeath();
-                _currentHealth = _maxHealth;
-            }
+        // Health damage if player is alive
+        if (_currentHealth > 0)
+        {
+            float previousHealth = _currentHealth;
+            _currentHealth -= remainingDamage;
+
+            OnHealthDamage(remainingDamage); // TODO: Restart regenerate health coroutine
+
+            if (_currentHealth <= 0)
+                if (OnDeath != null)
+                    OnDeath();
+
+            Mathf.Clamp(_currentHealth, 0, _maxHealth);
+        }
+    }
+
+    IEnumerator<float> _HandleHealthRegen()
+    {
+        yield return Timing.WaitForSeconds(_healthRegenDelay);
+
+        while (_currentHealth < _maxHealth)
+            _currentHealth += _healthRegenRate * Time.deltaTime;
+
+        _currentHealth = _maxHealth;
+    }
+
+    IEnumerator<float> _HandleShieldRegen()
+    {
+        yield return Timing.WaitForSeconds(_shieldRegenDelay);
+
+        while (_currentShield < _maxShield)
+            _currentShield += _shieldRegenRate * Time.deltaTime;
+
+        _currentShield = _maxShield;
     }
 }

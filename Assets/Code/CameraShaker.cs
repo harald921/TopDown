@@ -29,9 +29,6 @@ public class CameraShaker : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
-            _trauma += Vector3.one * 0.5f;
-
         if (Input.GetKeyDown(KeyCode.H)) // Add 50% yaw shake
             _trauma.x += 0.5f;
 
