@@ -12,6 +12,7 @@ public class ShieldBar : MonoBehaviour
 
     float _maxShield;
 
+
     public void Initialize(Player inPlayer, float inMaxShield)
     {
         inPlayer.OnShieldChange += UpdateBar;

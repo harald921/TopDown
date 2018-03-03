@@ -6,8 +6,8 @@ public class WeaponSpawner : Photon.MonoBehaviour
 {
     [SerializeField] GameObject _weaponPrefab;
 
-    [SerializeField] float _spawnHeight = 1.0f;
-    [SerializeField] float _spawnInterval = 60.0f;  // Respawn interval in seconds
+    [SerializeField] float _spawnHeight    = 1.0f;
+    [SerializeField] float _spawnInterval  = 60.0f; // Respawn interval in seconds
     [SerializeField] float _rotationOffset = 90.0f; // Rotation around forward in degrees
 
     float _timer = 0.0f;

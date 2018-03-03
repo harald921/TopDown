@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class DamageFlash : MonoBehaviour
 {
-    [SerializeField] Color _color = Color.red;
+    [SerializeField] Color _color     = Color.red;
     [SerializeField] float _fadeSpeed = 0.5f;
 
-    float _trauma = 0.0f;
+    float _trauma = 0;
 
     Material _flashMaterial;
     Color _defaultColor;

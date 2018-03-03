@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class NetworkManager : Photon.MonoBehaviour
 {
+    const string _gameVersion = "0.01";
+
     void Awake()
     {
         PhotonNetwork.sendRate = 64;
@@ -12,9 +14,10 @@ public class NetworkManager : Photon.MonoBehaviour
         ConnectToServer();
     }
 
+
     void ConnectToServer()
     {
-        PhotonNetwork.ConnectUsingSettings("0.01");
+        PhotonNetwork.ConnectUsingSettings(_gameVersion);
     }
 
     void OnConnectedToMaster()

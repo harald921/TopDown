@@ -41,7 +41,7 @@ public class Player : Photon.MonoBehaviour
     CoroutineHandle _healthRegenHandle;
     CoroutineHandle _shieldRegenHandle;
 
-    public int team { get { return _team; } }
+    public int team => _team;
 
     public delegate void HealthChangeHandler(float inPreviousHealth, float inCurrentHealth);
     public event HealthChangeHandler OnHealthChange;
@@ -94,19 +94,17 @@ public class Player : Photon.MonoBehaviour
         OnHealthChange += (float inPreviousHealth, float inCurrentHealth) =>
         {
             if (inPreviousHealth > inCurrentHealth)
-                if (OnHealthDamage != null)
-                    OnHealthDamage();
+                OnHealthDamage?.Invoke();
         };
 
         OnShieldChange += (float inPreviousShield, float inCurrentShield) =>
         {
             if (inPreviousShield > inCurrentShield)
-                if (OnShieldDamage != null)
-                    OnShieldDamage();
+                OnShieldDamage?.Invoke();
         };
 
         OnHealthDamage += () => { _healthRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _healthRegenHandle, SingletonBehavior.Overwrite);
-                                  _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _shieldRegenHandle, SingletonBehaviour.OverWrite); };
+                                  _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite); };
 
         OnShieldDamage += () => { _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleShieldRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite); };
 
@@ -276,8 +274,7 @@ public class Player : Photon.MonoBehaviour
             _currentShield -= remainingDamage;
 
             if (_currentShield <= 0)
-                if (OnShieldBreak != null)
-                    OnShieldBreak();
+                OnShieldBreak?.Invoke();
 
             Mathf.Clamp(_currentShield, 0, _maxShield);
 
@@ -296,8 +293,7 @@ public class Player : Photon.MonoBehaviour
             _currentHealth -= remainingDamage;
 
             if (_currentHealth <= 0)
-                if (OnDeath != null)
-                    OnDeath();
+                OnDeath?.Invoke();
 
             Mathf.Clamp(_currentHealth, 0, _maxHealth);
 
@@ -314,8 +310,7 @@ public class Player : Photon.MonoBehaviour
             float previousHealth = _currentHealth;
             _currentHealth += _healthRegenRate * Time.deltaTime;
 
-            if (OnHealthChange != null)
-                OnHealthChange(previousHealth, _currentHealth);
+            OnHealthChange?.Invoke(previousHealth, _currentHealth);
 
             yield return Timing.WaitForOneFrame;
         }
@@ -332,8 +327,7 @@ public class Player : Photon.MonoBehaviour
             float previousShield = _currentShield;
             _currentShield += _shieldRegenRate * Time.deltaTime;
 
-            if (OnShieldChange != null)
-                OnShieldChange(previousShield, _currentShield);
+            OnShieldChange?.Invoke(previousShield, _currentShield);
 
             yield return Timing.WaitForOneFrame;
         }

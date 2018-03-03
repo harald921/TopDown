@@ -17,7 +17,8 @@ public class GUIManager : MonoBehaviour
     }
 
     [SerializeField] ShieldBar _shieldBar;
-    public ShieldBar shieldBar { get { return _shieldBar; } }
+    public ShieldBar shieldBar => _shieldBar;
+
 
     void Awake()
     {

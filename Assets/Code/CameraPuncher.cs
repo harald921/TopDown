@@ -7,10 +7,10 @@ public class CameraPuncher : MonoBehaviour
     static CameraPuncher _instance;
     public static CameraPuncher instance;
 
-    [SerializeField] float _minFieldOfView = 40;
+    [SerializeField] float _minFieldOfView          = 40;
     [SerializeField] float _punchStrengthMultiplier = 1.0f;
-    [SerializeField] int _falloffExponent = 2;
-    [SerializeField] float _falloffSpeed = 1.0f;
+    [SerializeField] int   _falloffExponent         = 2;
+    [SerializeField] float _falloffSpeed            = 1.0f;
 
     float _trauma = 0.0f;
     float _defaultFieldOfView;
@@ -28,9 +28,6 @@ public class CameraPuncher : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Y))
-            AddTrauma(0.5f);
-
         SetCurrentPunchAmount(CalculatePunchStrength());
         HandleTraumaFalloff();
     }

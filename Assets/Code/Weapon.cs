@@ -92,7 +92,8 @@ public class Weapon : Photon.MonoBehaviour
             }
     }
 
-    /* External Methods */
+
+    // External
     public void PullTrigger()
     {
         // Return if weapon is reloading or firing
@@ -120,6 +121,24 @@ public class Weapon : Photon.MonoBehaviour
         _triggerReleased = true;
     }
 
+    public void TryReload()
+    {
+        // Return if the ammo is already reloaded
+        if (_weaponAmmoCurrent == _stats.maxAmmo)
+            return;
+
+        // Return if the weapon is already being reloaded
+        if (_isReloading)
+            return;
+
+        // PlayReloadSound();
+
+        _isReloading = true;
+        _reloadProgress = 0;
+    }
+
+
+    // Internal
     void Fire()
     {
         for (int i = 0; i < _stats.projectilesPerShot; i++)
@@ -154,22 +173,6 @@ public class Weapon : Photon.MonoBehaviour
 
         audioSource.pitch = Random.Range(0.98f, 1.02f);
         audioSource.PlayOneShot(_sounds.fire);
-    }
-
-    public void TryReload()
-    {
-        // Return if the ammo is already reloaded
-        if (_weaponAmmoCurrent == _stats.maxAmmo)
-            return;
-
-        // Return if the weapon is already being reloaded
-        if (_isReloading)
-            return;
-
-        // PlayReloadSound();
-
-        _isReloading = true;
-        _reloadProgress = 0;
     }
 
     void PlayReloadSound()

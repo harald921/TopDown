@@ -7,11 +7,11 @@ public class CameraShaker : MonoBehaviour
     static CameraShaker _instance;
     public static CameraShaker instance;
 
-    [SerializeField] Vector3 _maxYawPitchRoll = new Vector3(2, 2, 2);
-    [SerializeField] float _falloffSpeed = 2.0f;
-    [SerializeField] int _falloffExponent = 3;
-    [SerializeField] float _shakeStrengthMultiplier = 1.0f;
-    [SerializeField] float _shakeFrequency = 13.0f;
+    [SerializeField] Vector3 _maxYawPitchRoll         = new Vector3(2, 2, 2);
+    [SerializeField] float   _falloffSpeed            = 2.0f;
+    [SerializeField] int     _falloffExponent         = 3;
+    [SerializeField] float   _shakeStrengthMultiplier = 1.0f;
+    [SerializeField] float   _shakeFrequency          = 13.0f;
 
     Vector3 _trauma = Vector3.zero;
     Vector3 _defaultRotation;
@@ -29,18 +29,6 @@ public class CameraShaker : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H)) // Add 50% yaw shake
-            _trauma.x += 0.5f;
-
-        if (Input.GetKeyDown(KeyCode.J)) // Add 50% pitch shake
-            _trauma.y += 0.5f;
-
-        if (Input.GetKeyDown(KeyCode.K)) // Add 50% roll shake
-            _trauma.z += 0.5f;
-
-        if (Input.GetKey(KeyCode.Space))
-            _trauma = Vector3.one;
-
         _mainCamera.transform.eulerAngles = _defaultRotation + CalculateShakeAngle(CalculateShakeAmount()); 
 
         HandleTraumaFalloff();
