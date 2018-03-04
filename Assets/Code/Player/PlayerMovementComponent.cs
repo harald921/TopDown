@@ -32,7 +32,7 @@ public class PlayerMovementComponent : MonoBehaviour
     void HandleMovement()
     {
         Vector3 movement = _inputComponent.input.movementDirection * _moveSpeed; 
-        transform.position += movement * Time.deltaTime;
+        transform.position += Vector3.ClampMagnitude(movement, _moveSpeed) * Time.deltaTime;
     }
 
     Quaternion CalculateTargetRotation()
