@@ -17,7 +17,30 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     [SerializeField] float _shieldRegenRate  = 40.0f;
 
     float _currentHealth;
+    float currentHealth
+    {
+        get { return _currentHealth; }
+        set
+        {
+            float previousHealth = _currentHealth;
+            _currentHealth = value;
+
+            OnHealthChange(previousHealth, _currentHealth); 
+        }
+    }
+
     float _currentShield;
+    float currentShield
+    {
+        get { return _currentShield; }
+        set
+        {
+            float previousShield = _currentShield;
+            _currentShield = value;
+
+            OnShieldChange(previousShield, _currentShield);
+        }
+    }
 
     CoroutineHandle _healthRegenHandle;
     CoroutineHandle _shieldRegenHandle;
@@ -32,11 +55,20 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     public event Action OnShieldBreak;
     public event Action OnDeath;
 
+    PlayerRespawnComponent _respawnComponent;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+            DealDamage(20);
+    }
 
     void Awake()
     {
         if (!photonView.isMine)
             return;
+
+        _respawnComponent = GetComponent<PlayerRespawnComponent>();
 
         _currentHealth = _maxHealth;
         _currentShield = _maxShield;
@@ -46,36 +78,42 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         SubscribeEvents();
     }
 
-    public void ManualUpdate()
-    {
-
-    }
-
     void SubscribeEvents()
     {
         // Calling of OnHealthDamage and OnShieldDamage
-        OnHealthChange += (float inPreviousHealth, float inCurrentHealth) =>
-        {
+        OnHealthChange += (float inPreviousHealth, float inCurrentHealth) => {
             if (inPreviousHealth > inCurrentHealth)
                 OnHealthDamage?.Invoke();
         };
-        OnShieldChange += (float inPreviousShield, float inCurrentShield) =>
-        {
+
+        OnShieldChange += (float inPreviousShield, float inCurrentShield) => {
             if (inPreviousShield > inCurrentShield)
                 OnShieldDamage?.Invoke();
         };
 
+
         // Health and Shield regen
         OnHealthDamage += () => {
             _healthRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _healthRegenHandle, SingletonBehavior.Overwrite);
-            _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite);
+            _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleShieldRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite);
         };
+
         OnShieldDamage += () => { _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleShieldRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite); };
 
-        // Camera shake and Camera punch
-        OnHealthDamage += () => { FindObjectOfType<CameraShaker>().AddTrauma(Vector3.one * 0.5f); }; // TODO: Use manager
-        OnHealthDamage += () => { FindObjectOfType<CameraPuncher>().AddTrauma(0.5f); }; // TODO: Use manager
-        OnShieldDamage += () => { FindObjectOfType<CameraShaker>().AddTrauma(Vector3.one * 0.4f); }; // TODO: Use manager
+
+        // Camera shake and Camera punch when taking damage
+        OnHealthDamage += () => { FindObjectOfType<CameraShaker>().AddTrauma(Vector3.one * 0.5f); }; // TODO: Use manager for camera effect
+        OnHealthDamage += () => { FindObjectOfType<CameraPuncher>().AddTrauma(0.5f); };              // TODO: Use manager for camera effect
+        OnShieldDamage += () => { FindObjectOfType<CameraShaker>().AddTrauma(Vector3.one * 0.4f); }; // TODO: Use manager for camera effect
+
+
+        // Death and Respawn
+        OnDeath += () => {
+            Timing.KillCoroutines(_shieldRegenHandle);
+            Timing.KillCoroutines(_healthRegenHandle);
+        };
+
+        _respawnComponent.OnRespawn += RefreshHealthAndShield;
     }
 
 
@@ -91,15 +129,11 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         // Shield damage if shield is up
         if (_currentShield > 0)
         {
-            float previousShield = _currentShield;
-            _currentShield -= remainingDamage;
+            float previousShield = currentShield;
+            currentShield -= remainingDamage;
 
             if (_currentShield <= 0)
                 OnShieldBreak?.Invoke();
-
-            Mathf.Clamp(_currentShield, 0, _maxShield);
-
-            OnShieldChange(previousShield, _currentShield);
 
             remainingDamage -= previousShield;
         }
@@ -113,12 +147,10 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             float previousHealth = _currentHealth;
             _currentHealth -= remainingDamage;
 
+            OnHealthChange(previousHealth, _currentHealth);
+
             if (_currentHealth <= 0)
                 OnDeath?.Invoke();
-
-            Mathf.Clamp(_currentHealth, 0, _maxHealth);
-
-            OnHealthChange(previousHealth, _currentHealth);
         }
     }
 
@@ -154,5 +186,11 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         }
 
         _currentShield = _maxShield;
+    }
+
+    void RefreshHealthAndShield()
+    {
+        currentHealth = _maxHealth;
+        currentShield = _maxShield;
     }
 }

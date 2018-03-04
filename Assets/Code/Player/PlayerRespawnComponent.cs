@@ -1,25 +1,30 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 public class PlayerRespawnComponent : MonoBehaviour
 {
     [SerializeField] Transform _spawnLocationsParent;
     [SerializeField] float _respawnTime = 3.0f;
 
-    PlayerHealthComponent _playerHealthComponent;
     MeshRenderer _meshRenderer;
     SpawnLocation[] _spawnLocations;
 
+    PlayerHealthComponent _healthComponent;
+
+    public event Action OnRespawn;
+    
 
     void Awake()
     {
-        _playerHealthComponent = GetComponent<PlayerHealthComponent>();
+        _healthComponent = GetComponent<PlayerHealthComponent>();
         _meshRenderer = GetComponent<MeshRenderer>();
 
         _spawnLocations = GetAllSpawnLocations();
 
-        _playerHealthComponent.OnDeath += () => StartCoroutine(HandleRespawn());
+        _healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
     }
 
 
@@ -28,30 +33,31 @@ public class PlayerRespawnComponent : MonoBehaviour
         return _spawnLocationsParent.GetComponentsInChildren<SpawnLocation>();
     }
 
-    IEnumerator HandleRespawn()
+    IEnumerator<float> _HandleRespawn()
     {
-        DespawnPlayer();
-        yield return new WaitForSeconds(_respawnTime);
-        RespawnPlayer();
+        Despawn();
+        yield return Timing.WaitForSeconds(_respawnTime);
+        Spawn();
     }
 
-    void DespawnPlayer()
+    void Despawn()
     {
-        _playerHealthComponent.enabled = false;
+        _healthComponent.enabled = false;
         _meshRenderer.enabled = false;
     }
 
-    void RespawnPlayer()
+    void Spawn()
     {
         transform.position = GetRandomSpawnPosition();
-        _playerHealthComponent.enabled = true;
+        _healthComponent.enabled = true;
         _meshRenderer.enabled = true;
-    }
 
+        OnRespawn?.Invoke();
+    }
 
     Vector3 GetRandomSpawnPosition()
     {
-        SpawnLocation spawnLocation = _spawnLocations[Random.Range(0, _spawnLocations.Length)];
+        SpawnLocation spawnLocation = _spawnLocations[UnityEngine.Random.Range(0, _spawnLocations.Length)];
 
         return new Vector3(spawnLocation.transform.position.x, 1, spawnLocation.transform.position.z);
     }
