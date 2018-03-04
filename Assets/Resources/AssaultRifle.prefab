@@ -186,7 +186,7 @@ MonoBehaviour:
     reload: {fileID: 0}
   _firingMechanism: 0
   _stats:
-    fireRate: 15
+    fireRate: 9.5
     projectileSpread: 0.05
     velocityInconsistensy: 0.05
     damageMin: 10
