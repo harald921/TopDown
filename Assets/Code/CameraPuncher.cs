@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class CameraPuncher : MonoBehaviour
 {
-    static CameraPuncher _instance;
-    public static CameraPuncher instance;
-
     [SerializeField] float _minFieldOfView          = 40;
     [SerializeField] float _punchStrengthMultiplier = 1.0f;
     [SerializeField] int   _falloffExponent         = 2;
@@ -20,7 +17,6 @@ public class CameraPuncher : MonoBehaviour
 
     void Awake()
     {
-        _instance = this;
         _mainCamera = Camera.main;
         _defaultFieldOfView = _mainCamera.fieldOfView;
     }

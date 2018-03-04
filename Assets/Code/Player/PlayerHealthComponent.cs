@@ -25,7 +25,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             float previousHealth = _currentHealth;
             _currentHealth = value;
 
-            OnHealthChange(previousHealth, _currentHealth); 
+            OnHealthChange?.Invoke(previousHealth, _currentHealth); 
         }
     }
 
@@ -38,7 +38,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             float previousShield = _currentShield;
             _currentShield = value;
 
-            OnShieldChange(previousShield, _currentShield);
+            OnShieldChange?.Invoke(previousShield, _currentShield);
         }
     }
 
@@ -70,8 +70,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
         _respawnComponent = GetComponent<PlayerRespawnComponent>();
 
-        _currentHealth = _maxHealth;
-        _currentShield = _maxShield;
+        RefreshHealthAndShield();
 
         GUIManager.instance.shieldBar.Initialize(this, _maxShield);
 
@@ -102,9 +101,9 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
 
         // Camera shake and Camera punch when taking damage
-        OnHealthDamage += () => { FindObjectOfType<CameraShaker>().AddTrauma(Vector3.one * 0.5f); }; // TODO: Use manager for camera effect
-        OnHealthDamage += () => { FindObjectOfType<CameraPuncher>().AddTrauma(0.5f); };              // TODO: Use manager for camera effect
-        OnShieldDamage += () => { FindObjectOfType<CameraShaker>().AddTrauma(Vector3.one * 0.4f); }; // TODO: Use manager for camera effect
+        OnHealthDamage += () => { CameraManager.instance.cameraShaker.AddTrauma(Vector3.one * 0.5f); }; 
+        OnHealthDamage += () => { CameraManager.instance.cameraPuncher.AddTrauma(0.5f); };              
+        OnShieldDamage += () => { CameraManager.instance.cameraShaker.AddTrauma(Vector3.one * 0.4f); }; 
 
 
         // Death and Respawn

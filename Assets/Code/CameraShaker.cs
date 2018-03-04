@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class CameraShaker : MonoBehaviour
 {
-    static CameraShaker _instance;
-    public static CameraShaker instance;
-
     [SerializeField] Vector3 _maxYawPitchRoll         = new Vector3(2, 2, 2);
     [SerializeField] float   _falloffSpeed            = 2.0f;
     [SerializeField] int     _falloffExponent         = 3;
@@ -21,7 +18,6 @@ public class CameraShaker : MonoBehaviour
 
     void Awake()
     {
-        _instance = this;
         _mainCamera = Camera.main;
         _defaultRotation = transform.eulerAngles;
     }
