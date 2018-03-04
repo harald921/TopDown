@@ -10,11 +10,14 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     Weapon _heldWeapon;
 
     PlayerCollisionComponent _collisionComponent;
+    PlayerInputComponent _inputComponent;
 
 
     void Awake()
     {
         _collisionComponent = GetComponent<PlayerCollisionComponent>();
+        _inputComponent     = GetComponent<PlayerInputComponent>();
+
         GetComponent<PlayerHealthComponent>().OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
     }
 
@@ -25,9 +28,22 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         HandleWeaponPickup();
     }
 
+
+    void HandleShooting()
+    {
+        if (!_heldWeapon)
+            return;
+
+        if (_inputComponent.input.pullWeaponTrigger)
+            _heldWeapon.PullTrigger();
+
+        if (_inputComponent.input.releaseWeaponTrigger)
+            _heldWeapon.ReleaseTrigger();
+    }
+
     void HandleWeaponPickup()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (_inputComponent.input.pickUpWeapon)
         {
             Weapon nearbyWeapon = GetClosestWeapon();
             if (nearbyWeapon)
@@ -39,7 +55,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.G))
+        if (_inputComponent.input.dropWeapon)
             if (_heldWeapon)
                 photonView.RPC("DropWeapon", PhotonTargets.All);
     }
@@ -105,18 +121,5 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         }
 
         return nearbyWeapons;
-    }
-
-
-    void HandleShooting()
-    {
-        if (!_heldWeapon)
-            return;
-
-        if (Input.GetMouseButton(0))
-            _heldWeapon.PullTrigger();
-
-        if (Input.GetMouseButtonUp(0))
-            _heldWeapon.ReleaseTrigger();
     }
 }

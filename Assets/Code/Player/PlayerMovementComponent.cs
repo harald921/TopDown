@@ -9,6 +9,13 @@ public class PlayerMovementComponent : MonoBehaviour
     [SerializeField] float _moveSpeed = 2.5f;
     [SerializeField] float _rotationSpeed = 10.0f;
 
+    PlayerInputComponent _inputComponent;
+
+
+    void Awake()
+    {
+        _inputComponent = GetComponent<PlayerInputComponent>();
+    }
 
     public void ManualUpdate()
     {
@@ -24,22 +31,12 @@ public class PlayerMovementComponent : MonoBehaviour
 
     void HandleMovement()
     {
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * _moveSpeed * Time.deltaTime;
-        transform.position += movement;
+        Vector3 movement = _inputComponent.input.movementDirection * _moveSpeed; 
+        transform.position += movement * Time.deltaTime;
     }
 
     Quaternion CalculateTargetRotation()
     {
-        return Quaternion.LookRotation(GetAimTarget() - transform.position);
-    }
-
-    Vector3 GetAimTarget()
-    {
-        Vector3 aimTarget = Input.mousePosition;
-        aimTarget.z = Mathf.Abs(Camera.main.transform.position.y - transform.position.y);
-        aimTarget = Camera.main.ScreenToWorldPoint(aimTarget);
-        aimTarget = new Vector3(aimTarget.x, transform.localScale.y, aimTarget.z);
-
-        return aimTarget;
+        return Quaternion.LookRotation(_inputComponent.input.aimTarget - transform.position);
     }
 }

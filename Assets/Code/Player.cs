@@ -34,6 +34,7 @@ public class Player : Photon.MonoBehaviour
         if (!photonView.isMine)
             return;
 
+        _inputComponent.ManualUpdate();
         _movementComponent.ManualUpdate();
         _collisionComponent.ManualUpdate();
         _weaponComponent.ManualUpdate();
