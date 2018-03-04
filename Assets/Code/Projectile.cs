@@ -5,7 +5,7 @@ using UnityEngine;
 public class Projectile : Photon.MonoBehaviour
 {
     [SerializeField] float _size = 0.1f;
-    [SerializeField] LayerMask _layersThatStop;
+    [SerializeField] LayerMask _collidesWith;
 
     Vector3 _velocity;
     float _lifetime;
@@ -33,8 +33,8 @@ public class Projectile : Photon.MonoBehaviour
 
     void Update()
     {
-        Move();
         CheckCollision(transform.position);
+        Move();
         ProgressLifetime();
     }
 
@@ -55,7 +55,7 @@ public class Projectile : Photon.MonoBehaviour
     {
         RaycastHit[] hits = Physics.SphereCastAll(inOrigin, _size, _velocity.normalized, _velocity.magnitude * (Time.deltaTime + inNetDelta));
         foreach (RaycastHit hit in hits)
-            if (_layersThatStop.Contains(hit.collider.gameObject.layer))
+            if (_collidesWith.Contains(hit.collider.gameObject.layer))
                 OnCollision(hit.collider);
     }
 

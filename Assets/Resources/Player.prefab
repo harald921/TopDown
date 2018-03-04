@@ -298,7 +298,7 @@ MonoBehaviour:
   _collidesWith:
     serializedVersion: 2
     m_Bits: 3840
-  _environmentCollisionRange: 0.8
+  _environmentCollisionRange: 0.5
 --- !u!114 &114213633986553632
 MonoBehaviour:
   m_ObjectHideFlags: 1

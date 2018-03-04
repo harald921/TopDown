@@ -57,6 +57,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
     PlayerRespawnComponent _respawnComponent;
 
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
@@ -153,6 +154,12 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         }
     }
 
+    void RefreshHealthAndShield()
+    {
+        currentHealth = _maxHealth;
+        currentShield = _maxShield;
+    }
+
     IEnumerator<float> _HandleHealthRegen()
     {
         yield return Timing.WaitForSeconds(_healthRegenDelay);
@@ -185,11 +192,5 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         }
 
         _currentShield = _maxShield;
-    }
-
-    void RefreshHealthAndShield()
-    {
-        currentHealth = _maxHealth;
-        currentShield = _maxShield;
     }
 }

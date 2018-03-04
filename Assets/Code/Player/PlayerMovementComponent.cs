@@ -28,11 +28,12 @@ public class PlayerMovementComponent : MonoBehaviour
     {
         _rotationTransform.rotation = Quaternion.RotateTowards(_rotationTransform.rotation, CalculateTargetRotation(), _rotationSpeed * Time.deltaTime);
     }
-
+     
     void HandleMovement()
     {
-        Vector3 movement = _inputComponent.input.movementDirection * _moveSpeed; 
-        transform.position += Vector3.ClampMagnitude(movement, _moveSpeed) * Time.deltaTime;
+        Vector3 movement = Vector3.ClampMagnitude(_inputComponent.input.movementDirection * _moveSpeed, _moveSpeed); 
+
+        transform.position += movement * Time.deltaTime;
     }
 
     Quaternion CalculateTargetRotation()
