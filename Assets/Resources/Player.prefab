@@ -297,8 +297,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _collidesWith:
     serializedVersion: 2
-    m_Bits: 0
-  _environmentCollisionRange: 1
+    m_Bits: 3840
+  _environmentCollisionRange: 0.8
 --- !u!114 &114213633986553632
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -333,8 +333,8 @@ MonoBehaviour:
   - {fileID: 114581096325257656}
   - {fileID: 114952871301183270}
   ObservedComponentsFoldoutOpen: 1
-  viewIdField: 3
-  instantiationId: 3
+  viewIdField: 0
+  instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
 --- !u!114 &114581096325257656
@@ -454,8 +454,8 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
-  viewIdField: 1
-  instantiationId: 1
+  viewIdField: 0
+  instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
 --- !u!114 &114759079435166890
@@ -482,8 +482,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotationTransform: {fileID: 4831765480635312}
-  _moveSpeed: 2.5
-  _rotationSpeed: 10
+  _moveSpeed: 5
+  _rotationSpeed: 1200
 --- !u!114 &114844783418726794
 MonoBehaviour:
   m_ObjectHideFlags: 1
