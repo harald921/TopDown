@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerInputComponent : MonoBehaviour
 {
+    [SerializeField] LayerMask _layerMask; 
+
 	public struct SInput
     {
         public Vector3 movementDirection;
@@ -33,10 +35,18 @@ public class PlayerInputComponent : MonoBehaviour
 
     Vector3 GetAimTarget()
     {
-        Vector3 aimTarget = Input.mousePosition;
-        aimTarget.z = Mathf.Abs(Camera.main.transform.position.y - transform.position.y);
-        aimTarget = Camera.main.ScreenToWorldPoint(aimTarget);
-        aimTarget = new Vector3(aimTarget.x, transform.localScale.y, aimTarget.z);
+        Vector3 aimTarget = Vector3.zero;
+
+        RaycastHit[] hits = Physics.RaycastAll(CameraManager.instance.mainCamera.ScreenPointToRay(Input.mousePosition));
+
+        foreach (RaycastHit hit in hits)
+            if (_layerMask.Contains(hit.collider.gameObject.layer))
+            {
+                aimTarget = hit.point;
+                break;
+            }
+
+        aimTarget = new Vector3(aimTarget.x, 1, aimTarget.z);
 
         return aimTarget;
     }
