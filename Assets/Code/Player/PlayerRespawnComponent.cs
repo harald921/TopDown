@@ -7,19 +7,19 @@ public class PlayerRespawnComponent : MonoBehaviour
     [SerializeField] Transform _spawnLocationsParent;
     [SerializeField] float _respawnTime = 3.0f;
 
-    Player _player;
+    PlayerHealthComponent _playerHealthComponent;
     MeshRenderer _meshRenderer;
     SpawnLocation[] _spawnLocations;
 
 
     void Awake()
     {
-        _player = GetComponent<Player>();
+        _playerHealthComponent = GetComponent<PlayerHealthComponent>();
         _meshRenderer = GetComponent<MeshRenderer>();
 
         _spawnLocations = GetAllSpawnLocations();
 
-        _player.OnDeath += () => StartCoroutine(HandleRespawn());
+        _playerHealthComponent.OnDeath += () => StartCoroutine(HandleRespawn());
     }
 
 
@@ -37,14 +37,14 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     void DespawnPlayer()
     {
-        _player.enabled = false;
+        _playerHealthComponent.enabled = false;
         _meshRenderer.enabled = false;
     }
 
     void RespawnPlayer()
     {
         transform.position = GetRandomSpawnPosition();
-        _player.enabled = true;
+        _playerHealthComponent.enabled = true;
         _meshRenderer.enabled = true;
     }
 

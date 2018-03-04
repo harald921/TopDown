@@ -151,7 +151,7 @@ public class PhotonEditor : EditorWindow
     {
         EditorApplication.projectWindowChanged += EditorUpdate;
         EditorApplication.hierarchyWindowChanged += EditorUpdate;
-        EditorApplication.playmodeStateChanged += PlaymodeStateChanged;
+        EditorApplication.playModeStateChanged += PlaymodeStateChanged;
         EditorApplication.update += OnUpdate;
 
         // detect optional packages
@@ -249,7 +249,7 @@ public class PhotonEditor : EditorWindow
 
 
     // called in editor on change of play-mode (used to show a message popup that connection settings are incomplete)
-    private static void PlaymodeStateChanged()
+    private static void PlaymodeStateChanged(PlayModeStateChange inNewPlayState)
     {
         if (EditorApplication.isPlaying || !EditorApplication.isPlayingOrWillChangePlaymode)
         {

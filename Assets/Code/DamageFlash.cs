@@ -18,7 +18,7 @@ public class DamageFlash : MonoBehaviour
         _flashMaterial = GetComponent<MeshRenderer>().material;
         _defaultColor = _flashMaterial.color;
 
-        GetComponent<Player>().OnHealthDamage += () => { AddTrauma(1); };
+        GetComponent<PlayerHealthComponent>().OnHealthDamage += () => { AddTrauma(1); };
     }
 
     void Update()

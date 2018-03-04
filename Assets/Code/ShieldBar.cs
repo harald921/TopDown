@@ -13,9 +13,9 @@ public class ShieldBar : MonoBehaviour
     float _maxShield;
 
 
-    public void Initialize(Player inPlayer, float inMaxShield)
+    public void Initialize(PlayerHealthComponent inPlayerHealthComponent, float inMaxShield)
     {
-        inPlayer.OnShieldChange += UpdateBar;
+        inPlayerHealthComponent.OnShieldChange += UpdateBar;
         _maxShield = inMaxShield;
 
         foreach (Transform child in transform)

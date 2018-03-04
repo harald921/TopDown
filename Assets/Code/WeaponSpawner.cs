@@ -47,7 +47,7 @@ public class WeaponSpawner : Photon.MonoBehaviour
         Transform weaponTransform  = PhotonView.Find(inChildViewID).transform;
         Transform spawnerTransform = PhotonView.Find(inParentViewID).transform;
 
-        weaponTransform.transform.Rotate(weaponTransform.forward, 90);
+        weaponTransform.transform.Rotate(weaponTransform.forward, _rotationOffset);
         weaponTransform.SetParent(spawnerTransform);
     }
 }

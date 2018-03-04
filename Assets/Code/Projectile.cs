@@ -10,13 +10,6 @@ public class Projectile : Photon.MonoBehaviour
     Vector3 _velocity;
     float _lifetime;
 
-    Rigidbody _rigidbody;
-
-
-    void Awake()
-    {
-        _rigidbody = GetComponent<Rigidbody>();    
-    }
 
     public void Initialize(float inLifetime, Vector3 inVelocity)
     {

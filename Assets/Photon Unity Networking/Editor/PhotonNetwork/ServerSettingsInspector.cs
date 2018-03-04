@@ -123,7 +123,7 @@ public class ServerSettingsInspector : Editor
 
 
 				EditorGUI.indentLevel ++;
-				CloudRegionFlag valRegions = (CloudRegionFlag)EditorGUILayout.EnumMaskField(" ", settings.EnabledRegions);
+				CloudRegionFlag valRegions = (CloudRegionFlag)EditorGUILayout.EnumFlagsField(" ", settings.EnabledRegions);
 
                     if (valRegions != settings.EnabledRegions)
                     {
