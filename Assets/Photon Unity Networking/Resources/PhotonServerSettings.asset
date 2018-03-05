@@ -50,4 +50,5 @@ MonoBehaviour:
   - PickupWeapon
   - ModifyHealth
   - DealDamage
+  - SetFlag
   DisableAutoOpenWizard: 1
