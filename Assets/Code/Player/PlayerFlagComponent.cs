@@ -23,8 +23,23 @@ public class PlayerFlagComponent : Photon.MonoBehaviour
 
 
     // External
+    public void SetFlag(EFlag inFlag, bool inState, float inDuration = 0.0f, bool inNetTransfer = false)
+    {
+        if (inNetTransfer)
+            photonView.RPC("NetSetFlag", PhotonTargets.All, inFlag, inState, inDuration);
+        else
+            NetSetFlag(inFlag, inState, inDuration);
+    }
+
+    public bool GetFlag(EFlag inFlag)
+    {
+        return _flags[inFlag];
+    }
+
+
+    // Internal
     [PunRPC]
-    public void SetFlag(EFlag inFlag, bool inState, float inDuration = 0.0f)
+    void NetSetFlag(EFlag inFlag, bool inState, float inDuration = 0.0f)
     {
         _flags[inFlag] = inState;
 
@@ -40,27 +55,15 @@ public class PlayerFlagComponent : Photon.MonoBehaviour
             Timing.KillCoroutines(_flagHandles[inFlag]);
     }
 
-    public bool GetFlag(EFlag inFlag)
-    {
-        return _flags[inFlag];
-    }
-
-
-    // Internal
     IEnumerator<float> HandleDuration(EFlag inFlag, float inDuration, bool inState)
     {
-        float timer = 0;
-        while (timer < inDuration)
-        {
-            timer += Time.deltaTime;
-            yield return Timing.WaitForOneFrame;
-        }
-
+        yield return Timing.WaitForSeconds(inDuration);
         SetFlag(inFlag, !inState);
     }
 }
 
+
 public enum EFlag
 {
-    
+    Dead,
 }
