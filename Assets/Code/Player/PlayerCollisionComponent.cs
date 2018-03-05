@@ -6,7 +6,8 @@ public class PlayerCollisionComponent : MonoBehaviour
 {
     [Header("Collision")]
     [SerializeField] LayerMask _collidesWith;
-    [SerializeField] float _environmentCollisionRange = 1.0f;
+
+    float _environmentCollisionRange;
 
     Collider _collider;
 
@@ -14,6 +15,7 @@ public class PlayerCollisionComponent : MonoBehaviour
     void Awake()
     {
         _collider = GetComponent<Collider>();
+        _environmentCollisionRange = ((CapsuleCollider)_collider).radius;
     }
 
     public void ManualUpdate()
