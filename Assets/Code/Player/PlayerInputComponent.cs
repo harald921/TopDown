@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PlayerInputComponent : MonoBehaviour
 {
-    [SerializeField] LayerMask _layerMask; 
+    [SerializeField] LayerMask _layerMask;
+
+    Camera _mainCamera;
+
 
 	public struct SInput
     {
@@ -19,6 +22,11 @@ public class PlayerInputComponent : MonoBehaviour
     SInput _input;
     public SInput input => _input;
 
+    
+    void Awake()
+    {
+        _mainCamera = Camera.main;
+    }
 
     public void ManualUpdate()
     {
@@ -33,11 +41,12 @@ public class PlayerInputComponent : MonoBehaviour
         };
     }
 
+
     Vector3 GetAimTarget()
     {
         Vector3 aimTarget = Vector3.zero;
 
-        RaycastHit[] hits = Physics.RaycastAll(CameraManager.instance.mainCamera.ScreenPointToRay(Input.mousePosition));
+        RaycastHit[] hits = Physics.RaycastAll(_mainCamera.ScreenPointToRay(Input.mousePosition));
 
         foreach (RaycastHit hit in hits)
             if (_layerMask.Contains(hit.collider.gameObject.layer))

@@ -56,13 +56,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     public event Action OnDeath;
 
     PlayerRespawnComponent _respawnComponent;
-
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.I))
-            DealDamage(20);
-    }
+    
 
     void Awake()
     {
@@ -73,9 +67,15 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
         RefreshHealthAndShield();
 
-        GUIManager.instance.shieldBar.Initialize(this, _maxShield);
+        FindObjectOfType<ShieldBar>().Initialize(this, _maxShield);
 
         SubscribeEvents();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+            DealDamage(20);
     }
 
     void SubscribeEvents()
@@ -102,9 +102,12 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
 
         // Camera shake and Camera punch when taking damage
-        OnHealthDamage += () => { CameraManager.instance.cameraShaker.AddTrauma(Vector3.one * 0.5f); }; 
-        OnHealthDamage += () => { CameraManager.instance.cameraPuncher.AddTrauma(0.5f); };              
-        OnShieldDamage += () => { CameraManager.instance.cameraShaker.AddTrauma(Vector3.one * 0.4f); }; 
+        CameraShaker  cameraShaker  = FindObjectOfType<CameraShaker>();
+        CameraPuncher cameraPuncher = FindObjectOfType<CameraPuncher>();
+
+        OnHealthDamage += () => { cameraShaker.AddTrauma(Vector3.one * 0.5f); }; 
+        OnHealthDamage += () => { cameraPuncher.AddTrauma(0.5f); };              
+        OnShieldDamage += () => { cameraShaker.AddTrauma(Vector3.one * 0.4f); }; 
 
 
         // Death and Respawn
