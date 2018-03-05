@@ -10,15 +10,19 @@ public class PlayerMovementComponent : MonoBehaviour
     [SerializeField] float _rotationSpeed = 10.0f;
 
     PlayerInputComponent _inputComponent;
-
+    PlayerFlagComponent _flagComponent;
 
     void Awake()
     {
         _inputComponent = GetComponent<PlayerInputComponent>();
+        _flagComponent = GetComponent<PlayerFlagComponent>();
     }
 
     public void ManualUpdate()
     {
+        if (_flagComponent.GetFlag(EFlag.Dead))
+            return;
+
         HandleMovement();
         HandleRotation();
     }

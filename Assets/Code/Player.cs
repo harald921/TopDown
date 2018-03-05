@@ -6,6 +6,9 @@ using MEC;
 
 public class Player : Photon.MonoBehaviour
 {
+    [SerializeField] GameObject _graphicsGO;
+    public GameObject graphicsGO => _graphicsGO;
+
     public PlayerMovementComponent  _movementComponent  { get; private set; }
     public PlayerCollisionComponent _collisionComponent { get; private set; }
     public PlayerHealthComponent    _healthComponent    { get; private set; }

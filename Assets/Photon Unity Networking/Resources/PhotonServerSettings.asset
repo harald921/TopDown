@@ -51,4 +51,5 @@ MonoBehaviour:
   - ModifyHealth
   - DealDamage
   - SetFlag
+  - NetSetFlag
   DisableAutoOpenWizard: 1

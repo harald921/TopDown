@@ -9,10 +9,11 @@ public class PlayerRespawnComponent : MonoBehaviour
     [SerializeField] Transform _spawnLocationsParent;
     [SerializeField] float _respawnTime = 3.0f;
 
-    MeshRenderer _meshRenderer;
+    GameObject _graphicsGO;
     SpawnLocation[] _spawnLocations;
 
     PlayerHealthComponent _healthComponent;
+    PlayerFlagComponent _flagComponent;
 
     public event Action OnRespawn;
     
@@ -20,11 +21,26 @@ public class PlayerRespawnComponent : MonoBehaviour
     void Awake()
     {
         _healthComponent = GetComponent<PlayerHealthComponent>();
-        _meshRenderer = GetComponent<MeshRenderer>();
+        _flagComponent = GetComponent<PlayerFlagComponent>();
+
+        _graphicsGO = GetComponent<Player>().graphicsGO;
 
         _spawnLocations = GetAllSpawnLocations();
 
+        SubscribeEvents();
+    }
+
+    void SubscribeEvents()
+    {
         _healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
+
+        // Despawning and Spawning
+        _healthComponent.OnDeath += Despawn;
+        OnRespawn += Spawn;
+
+        // Death state
+        _healthComponent.OnDeath += () => _flagComponent.SetFlag(EFlag.Dead, true);
+        OnRespawn += () => _flagComponent.SetFlag(EFlag.Dead, false);
     }
 
 
@@ -35,24 +51,21 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     IEnumerator<float> _HandleRespawn()
     {
-        Despawn();
         yield return Timing.WaitForSeconds(_respawnTime);
-        Spawn();
+        OnRespawn?.Invoke();
     }
 
     void Despawn()
     {
         _healthComponent.enabled = false;
-        _meshRenderer.enabled = false;
+        _graphicsGO.SetActive(false);
     }
 
     void Spawn()
     {
         transform.position = GetRandomSpawnPosition();
         _healthComponent.enabled = true;
-        _meshRenderer.enabled = true;
-
-        OnRespawn?.Invoke();
+        _graphicsGO.SetActive(true);
     }
 
     Vector3 GetRandomSpawnPosition()
