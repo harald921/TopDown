@@ -9,7 +9,6 @@ public class PlayerMovementComponent : MonoBehaviour
     [SerializeField] float _moveSpeed = 2.5f;
     [SerializeField] float _rotationTime = 0.05f;
 
-
     float _currentRotationVelocity;
 
     PlayerInputComponent _inputComponent;

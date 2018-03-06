@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class DamageFlash : MonoBehaviour
 {
+    [SerializeField] List<MeshRenderer> renderersToFlash;
     [SerializeField] Color _color     = Color.red;
     [SerializeField] float _fadeSpeed = 0.5f;
-
+    
     float _trauma = 0;
 
-    Material _flashMaterial;
-    Color _defaultColor;
+    Dictionary<MeshRenderer, Color> _defaultColors = new Dictionary<MeshRenderer, Color>();
 
 
     void Awake()
     {
-        //_flashMaterial = GetComponent<MeshRenderer>().material;
-        //_defaultColor = _flashMaterial.color;
-        //
-        //GetComponent<PlayerHealthComponent>().OnHealthDamage += () => { AddTrauma(1); };
+        GetComponent<PlayerHealthComponent>().OnHealthDamage += () => { AddTrauma(1); };
+
+        foreach (MeshRenderer renderer in renderersToFlash)
+            _defaultColors.Add(renderer, renderer.material.color);
 
         Debug.Log("TODO: Apply damage flash to relevant objects again");
     }
 
     void Update()
     {
-        //HandleDamageFlash();    
+        HandleDamageFlash();    
     }
 
 
@@ -38,7 +38,8 @@ public class DamageFlash : MonoBehaviour
     {
         _trauma = Mathf.Clamp01(_trauma);
 
-        _flashMaterial.color = Color.Lerp(_defaultColor, _color, _trauma);
+        foreach (MeshRenderer renderer in renderersToFlash)
+            renderer.material.color = Color.Lerp(_defaultColors[renderer], _color, _trauma);
 
         _trauma -= Time.deltaTime * _fadeSpeed;
     }

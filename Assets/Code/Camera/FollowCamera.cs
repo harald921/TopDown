@@ -4,26 +4,34 @@ using UnityEngine;
 
 public class FollowCamera : MonoBehaviour
 {
-    static Transform _targetTransform;
-
     [SerializeField] Vector3 _cameraOffset = new Vector3(0.0f, 15.0f, -5.0f);
     [SerializeField] float   _smoothTime   = 0.1f;
 
-    Vector3 targetPosition => _targetTransform.position + _cameraOffset; 
-
     Vector3 _velocity;
+    Vector3 _targetPosition => _targetPlayer.transform.position + _cameraOffset;
 
+    Camera _camera;
+    Player _targetPlayer;
+    PlayerInputComponent _inputComponent;
+
+
+    void Awake()
+    {
+        _camera = GetComponent<Camera>();
+    }
 
     void LateUpdate()
     {
-        if (!_targetTransform)
+        if (!_targetPlayer)
             return;
 
-        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref _velocity, _smoothTime);        
+        transform.position = Vector3.SmoothDamp(transform.position, _targetPosition, ref _velocity, _smoothTime);
     }
 
-    public static void SetTarget(Transform inTarget)
+
+    public void SetTargetPlayer(Player inPlayer)
     {
-        _targetTransform = inTarget;    
+        _targetPlayer = inPlayer;
+        _inputComponent = _targetPlayer.GetComponent<PlayerInputComponent>();
     }
 }

@@ -29,7 +29,7 @@ public class Player : Photon.MonoBehaviour
         _teamComponent      = GetComponent<PlayerTeamComponent>();
         _weaponComponent    = GetComponent<PlayerWeaponComponent>();
 
-        FollowCamera.SetTarget(transform);
+        FindObjectOfType<FollowCamera>().SetTargetPlayer(this);
     }
 
     void Update()
