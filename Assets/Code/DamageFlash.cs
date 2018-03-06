@@ -15,15 +15,17 @@ public class DamageFlash : MonoBehaviour
 
     void Awake()
     {
-        _flashMaterial = GetComponent<MeshRenderer>().material;
-        _defaultColor = _flashMaterial.color;
+        //_flashMaterial = GetComponent<MeshRenderer>().material;
+        //_defaultColor = _flashMaterial.color;
+        //
+        //GetComponent<PlayerHealthComponent>().OnHealthDamage += () => { AddTrauma(1); };
 
-        GetComponent<PlayerHealthComponent>().OnHealthDamage += () => { AddTrauma(1); };
+        Debug.Log("TODO: Apply damage flash to relevant objects again");
     }
 
     void Update()
     {
-        HandleDamageFlash();    
+        //HandleDamageFlash();    
     }
 
 
