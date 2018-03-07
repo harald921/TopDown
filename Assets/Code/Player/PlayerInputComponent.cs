@@ -39,18 +39,12 @@ public class PlayerInputComponent : Photon.MonoBehaviour
 
     Vector3 GetAimTarget()
     {
-        Vector3 aimTarget = Vector3.zero;
+        Plane aimTargetPlane = new Plane(Vector3.up, Vector3.up); // Second parameter should be the height of the players weapon
+        Ray mouseThroughCameraRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        float distanceToHit;
+        aimTargetPlane.Raycast(mouseThroughCameraRay, out distanceToHit);
 
-        RaycastHit[] hits = Physics.RaycastAll(_mainCamera.ScreenPointToRay(Input.mousePosition));
-
-        foreach (RaycastHit hit in hits)
-            if (_layerMask.Contains(hit.collider.gameObject.layer))
-            {
-                aimTarget = hit.point;
-                break;
-            }
-
-        aimTarget = new Vector3(aimTarget.x, 1, aimTarget.z);
+        Vector3 aimTarget = mouseThroughCameraRay.GetPoint(distanceToHit);
 
         return aimTarget;
     }
