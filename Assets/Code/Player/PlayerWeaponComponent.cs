@@ -8,38 +8,27 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     [SerializeField] float _weaponPickupRadius = 3.0f;
 
     Weapon _heldWeapon;
+    public Weapon heldWeapon => _heldWeapon;
 
+    Player                   _player;
     PlayerCollisionComponent _collisionComponent;
-    PlayerInputComponent _inputComponent;
+    PlayerInputComponent     _inputComponent;
 
-
-    void Awake()
+    public void ManualAwake()
     {
-        _collisionComponent = GetComponent<PlayerCollisionComponent>();
-        _inputComponent     = GetComponent<PlayerInputComponent>();
+        _player             = GetComponent<Player>();
+        _collisionComponent = _player.collisionComponent;
+        _inputComponent     = _player.inputComponent;
 
-        GetComponent<PlayerHealthComponent>().OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
+        _player.healthComponent.OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
     }
 
 
     public void ManualUpdate()
     {
-        HandleShooting();
         HandleWeaponPickup();
     }
 
-
-    void HandleShooting()
-    {
-        if (!_heldWeapon)
-            return;
-
-        if (_inputComponent.input.pullWeaponTrigger)
-            _heldWeapon.PullTrigger();
-
-        if (_inputComponent.input.releaseWeaponTrigger)
-            _heldWeapon.ReleaseTrigger();
-    }
 
     void HandleWeaponPickup()
     {
@@ -71,6 +60,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         weaponToPickup.GetComponent<Rigidbody>().isKinematic = true;
 
         _heldWeapon = weaponToPickup;
+        _heldWeapon.PickUp(_player);
     }
 
     [PunRPC]
@@ -80,8 +70,8 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         weaponRigidbody.isKinematic = false;
         weaponRigidbody.AddTorque(_heldWeapon.transform.forward * 4.0f);
 
+        _heldWeapon.Drop();
         _heldWeapon.transform.SetParent(null);
-        _heldWeapon.ReleaseTrigger();
         _heldWeapon = null;
     }
 

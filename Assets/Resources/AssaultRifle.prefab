@@ -181,20 +181,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c616940fd5ef6b4181af59250ab97bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sounds:
-    fire: {fileID: 0}
-    reload: {fileID: 0}
   _firingMechanism: 0
-  _stats:
-    fireRate: 9.5
-    projectileSpread: 0.05
-    velocityInconsistensy: 0.05
-    damageMin: 10
-    damageMax: 10
-    projectilesPerShot: 1
-    projectileSpeed: 80
-    projectileLifeTime: 3
-    maxAmmo: 20
-    reloadSpeed: 1
-  _projectileGO: {fileID: 1932406060625188, guid: 0bf01dd63f3c8a74198e3d0891dc27c7,
+  _projectilePrefab: {fileID: 1932406060625188, guid: 0bf01dd63f3c8a74198e3d0891dc27c7,
     type: 2}
+  _stats:
+    healthDamage: 10
+    shieldDamage: 5
+    fireTime: 0.12
+    projectilesPerShot: 1
+    projectileLifeTime: 3
+    firingAimingTime: 1
+    spread: 0.03
+    velocity: 120
+    velocityInconsistency: 0.05
+    maxAmmo: 20
+    reloadTime: 2

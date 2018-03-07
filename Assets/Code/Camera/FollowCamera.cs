@@ -10,15 +10,8 @@ public class FollowCamera : MonoBehaviour
     Vector3 _velocity;
     Vector3 _targetPosition => _targetPlayer.transform.position + _cameraOffset;
 
-    Camera _camera;
     Player _targetPlayer;
-    PlayerInputComponent _inputComponent;
 
-
-    void Awake()
-    {
-        _camera = GetComponent<Camera>();
-    }
 
     void LateUpdate()
     {
@@ -32,6 +25,5 @@ public class FollowCamera : MonoBehaviour
     public void SetTargetPlayer(Player inPlayer)
     {
         _targetPlayer = inPlayer;
-        _inputComponent = _targetPlayer.GetComponent<PlayerInputComponent>();
     }
 }

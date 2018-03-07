@@ -9,8 +9,6 @@ public class PlayerFlagComponent : Photon.MonoBehaviour
     Dictionary<EFlag, bool> _flags = new Dictionary<EFlag, bool>();
     Dictionary<EFlag, CoroutineHandle> _flagHandles = new Dictionary<EFlag, CoroutineHandle>();
 
-    List<EFlag> _runningFlagDurations = new List<EFlag>();
-
 
     void Awake()
     {
@@ -45,13 +43,10 @@ public class PlayerFlagComponent : Photon.MonoBehaviour
 
         // Start a duration coroutine, and overwrite any earlier duration coroutine of the same type
         if (inDuration > 0)
-        {
-            _runningFlagDurations.Add(inFlag);
-            Timing.RunCoroutineSingleton(HandleDuration(inFlag, inDuration, inState), _flagHandles[inFlag], SingletonBehavior.Overwrite);
-        }
+           _flagHandles[inFlag] = Timing.RunCoroutineSingleton(HandleDuration(inFlag, inDuration, inState), _flagHandles[inFlag], SingletonBehavior.Overwrite);
 
         // If the flag is set without a duration and a duration coroutine is going, kill the coroutine
-        else if (_runningFlagDurations.Contains(inFlag))
+        else 
             Timing.KillCoroutines(_flagHandles[inFlag]);
     }
 
@@ -66,4 +61,6 @@ public class PlayerFlagComponent : Photon.MonoBehaviour
 public enum EFlag
 {
     Dead,
+    Fired_Weapon,
+    Weapon_Fired_Aiming_Slow
 }

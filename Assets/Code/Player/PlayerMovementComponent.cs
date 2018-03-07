@@ -11,13 +11,15 @@ public class PlayerMovementComponent : MonoBehaviour
 
     float _currentRotationVelocity;
 
+    Player _player;
     PlayerInputComponent _inputComponent;
     PlayerFlagComponent _flagComponent;
 
-    void Awake()
+    public void ManualAwake()
     {
-        _inputComponent = GetComponent<PlayerInputComponent>();
-        _flagComponent = GetComponent<PlayerFlagComponent>();
+        _player = GetComponent<Player>();
+        _inputComponent = _player.inputComponent;
+        _flagComponent  = _player.flagComponent;
     }
 
     public void ManualUpdate()

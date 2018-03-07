@@ -1,184 +1,150 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 public class Weapon : Photon.MonoBehaviour
 {
-    [System.Serializable]
-    public struct Sounds
-    {
-        public AudioClip fire;
-        public AudioClip reload;
-    }
-    [SerializeField] Sounds _sounds;
-
-    public enum FiringMechanism
-    {
-        Auto,
-        Semi
-    }
     [SerializeField] FiringMechanism _firingMechanism;
-
-    [System.Serializable]
-    public struct Stats
-    {
-        public float fireRate;
-        public float projectileSpread;
-        public float velocityInconsistensy;
-
-        public float damageMin;
-        public float damageMax;
-
-        public int projectilesPerShot;
-
-        public float projectileSpeed;
-
-        public float projectileLifeTime;
-
-        public int maxAmmo;
-        public float reloadSpeed;
-    }
+    [SerializeField] GameObject _projectilePrefab;
     [SerializeField] Stats _stats;
+    public Stats stats => _stats;
 
-    [SerializeField] GameObject _projectileGO;
+    int _currentAmmo     = 0;
 
     Transform _muzzleTransform;
 
-    bool _triggerReleased = true;
-
-    bool  _isFiring       = false;
-    float _fireProgress   = 1.0f;
-    bool  _isReloading    = false;
-    float _reloadProgress = 1.0f;
-
-    int _weaponAmmoCurrent;
+    PlayerInputComponent _inputComponent;
 
 
     void Start()
     {
         _muzzleTransform = transform.GetChild(0);
 
-        _weaponAmmoCurrent = _stats.maxAmmo;
-    }
+        _currentAmmo = _stats.maxAmmo;
 
-    void Update()
-    {
-        ProgressFireTimer();
-        ProgressReloadTimer();
-    }
-    
-    void ProgressFireTimer()
-    {
-        // Add time to the fire progress and check if it is finished
-        if (_isFiring)
-            if ((_fireProgress += _stats.fireRate * Time.deltaTime) >= 1)
-            {
-                _isFiring = false;
-                _fireProgress = 1;
-            }
-    }
-
-    void ProgressReloadTimer()
-    {
-        // Add time to the reload progress and check if it is finished
-        if (_isReloading)
-            if ((_reloadProgress += _stats.reloadSpeed * Time.deltaTime) >= 1)
-            {
-                // Refill ammo in weapon
-                _weaponAmmoCurrent = _stats.maxAmmo;
-
-                _isReloading = false;
-                _reloadProgress = 1;
-            }
+        Timing.RunCoroutine(_IdleState());
     }
 
 
     // External
-    public void PullTrigger()
+    public void PickUp(Player inPlayer)
     {
-        // Return if weapon is reloading or firing
-        if (_isFiring || _isReloading)
-            return;
-
-        if (_firingMechanism == FiringMechanism.Semi)
-            if (!_triggerReleased)
-                return;
-
-        // Reload if the weapon has no ammo
-        if (_weaponAmmoCurrent == 0)
-        {
-            TryReload();
-            return;
-        }
-
-        _triggerReleased = false;
-
-        Fire();
+        _inputComponent = inPlayer.inputComponent;
     }
 
-    public void ReleaseTrigger()
+    public void Drop()
     {
-        _triggerReleased = true;
-    }
-
-    public void TryReload()
-    {
-        // Return if the ammo is already reloaded
-        if (_weaponAmmoCurrent == _stats.maxAmmo)
-            return;
-
-        // Return if the weapon is already being reloaded
-        if (_isReloading)
-            return;
-
-        // PlayReloadSound();
-
-        _isReloading = true;
-        _reloadProgress = 0;
+        _inputComponent = null;
     }
 
 
     // Internal
+    IEnumerator<float> _IdleState()
+    {
+        while (true)
+        {
+            // Do not proceed unless there's an input component
+            while (!_inputComponent)
+                yield return Timing.WaitForOneFrame;
+
+            // If the trigger is pulled, shoot
+            if (_inputComponent.input.pullWeaponTrigger)
+            {
+                if (_currentAmmo > 0)
+                    yield return Timing.WaitUntilDone(_FireState());
+                else
+                    yield return Timing.WaitUntilDone(_ReloadState());
+            }
+
+            // If the reload button is pressed, reload
+            if (_inputComponent.input.reloadWeapon)
+                if (_currentAmmo < _stats.maxAmmo)
+                    yield return Timing.WaitUntilDone(_ReloadState());
+
+            yield return Timing.WaitForOneFrame;
+        }
+    }
+
+    IEnumerator<float> _FireState()
+    {
+        // Fire and wait...
+        Fire();
+        yield return Timing.WaitForSeconds(_stats.fireTime);
+
+        // If it's a semi auto, wait until the trigger is released
+        if (_firingMechanism == FiringMechanism.Semi)
+            while (_inputComponent.input.pullWeaponTrigger)
+                yield return Timing.WaitForOneFrame;
+    }
+
+    IEnumerator<float> _ReloadState()
+    {
+        Reload();
+        yield return Timing.WaitForSeconds(_stats.reloadTime);
+    }
+
+
     void Fire()
     {
         for (int i = 0; i < _stats.projectilesPerShot; i++)
             CreateProjectile();
 
-        _weaponAmmoCurrent--;
+        _currentAmmo--;
+    }
 
-        // PlayGunshotSound();
+    void HandleAimSpeed()
+    {
 
-        _isFiring = true;
-        _fireProgress = 0;
+    }
+
+    void Reload()
+    {
+        _currentAmmo = _stats.maxAmmo;
     }
 
     void CreateProjectile()
     {
-        GameObject newProjectileGO = PhotonNetwork.Instantiate(_projectileGO.name, _muzzleTransform.position, Quaternion.identity, 0);
+        GameObject newProjectileGO = PhotonNetwork.Instantiate(_projectilePrefab.name, _muzzleTransform.position, Quaternion.identity, 0);
 
         // Calculate new projectiles vector
-        Vector3 newProjectileSpread = new Vector3(Random.Range(-_stats.projectileSpread, _stats.projectileSpread), 0, Random.Range(-_stats.projectileSpread, _stats.projectileSpread));
+        Vector3 newProjectileSpread = new Vector3(Random.Range(-_stats.spread, _stats.spread), 0, Random.Range(-_stats.spread, _stats.spread));
         Vector3 newProjectileDirection = _muzzleTransform.forward + newProjectileSpread;
-        float newProjectileVelocityModifier = _stats.projectileSpeed + Random.Range(-_stats.velocityInconsistensy, _stats.velocityInconsistensy);
+        float newProjectileVelocityModifier = _stats.velocity + Random.Range(-_stats.velocityInconsistency, _stats.velocityInconsistency);
 
         newProjectileGO.GetComponent<Projectile>().Initialize(_stats.projectileLifeTime, newProjectileDirection.normalized * newProjectileVelocityModifier);
     }
 
-    void PlayGunshotSound()
+
+
+
+
+
+    [System.Serializable]
+    public struct Stats
     {
-        AudioSource audioSource = GetComponent<AudioSource>();
+        [Space(5)]
+        public float healthDamage;
+        public float shieldDamage;
 
-        if (audioSource.isPlaying)
-            audioSource.Stop();
+        [Space(5)]
+        public float fireTime;
+        public int   projectilesPerShot;
+        public float projectileLifeTime;
 
-        audioSource.pitch = Random.Range(0.98f, 1.02f);
-        audioSource.PlayOneShot(_sounds.fire);
+        [Space(5)]
+        public float spread;
+        public float velocity;
+        public float velocityInconsistency;
+
+        [Space(5)]
+        public int maxAmmo;
+        public float reloadTime;
     }
 
-    void PlayReloadSound()
+    public enum FiringMechanism
     {
-        AudioSource audioSource = GetComponent<AudioSource>();
-        audioSource.pitch = Random.Range(0.98f, 1.02f);
-        audioSource.PlayOneShot(_sounds.reload);
+        Auto,
+        Semi
     }
 }
