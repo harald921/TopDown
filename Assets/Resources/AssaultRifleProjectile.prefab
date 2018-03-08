@@ -163,10 +163,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a1e328c3743e1746ae776e608a761d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _type: 1
   _size: 0.1
-  _layersThatStop:
+  _collidesWith:
     serializedVersion: 2
-    m_Bits: 4294888648
+    m_Bits: 35840
 --- !u!114 &114830171394543022
 MonoBehaviour:
   m_ObjectHideFlags: 1

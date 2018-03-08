@@ -58,7 +58,7 @@ public class Weapon : Photon.MonoBehaviour
             }
 
             // If the reload button is pressed, reload
-            if (_inputComponent.input.reloadWeapon)
+            else if (_inputComponent.input.reloadWeapon)
                 if (_currentAmmo < _stats.maxAmmo)
                     yield return Timing.WaitUntilDone(_ReloadState());
 
@@ -93,11 +93,6 @@ public class Weapon : Photon.MonoBehaviour
         _currentAmmo--;
     }
 
-    void HandleAimSpeed()
-    {
-
-    }
-
     void Reload()
     {
         _currentAmmo = _stats.maxAmmo;
@@ -112,7 +107,7 @@ public class Weapon : Photon.MonoBehaviour
         Vector3 newProjectileDirection = _muzzleTransform.forward + newProjectileSpread;
         float newProjectileVelocityModifier = _stats.velocity + Random.Range(-_stats.velocityInconsistency, _stats.velocityInconsistency);
 
-        newProjectileGO.GetComponent<Projectile>().Initialize(_stats.projectileLifeTime, newProjectileDirection.normalized * newProjectileVelocityModifier);
+        newProjectileGO.GetComponent<Projectile>().Initialize(_stats.damage, _stats.projectileLifeTime, newProjectileDirection.normalized * newProjectileVelocityModifier);
     }
 
 
@@ -124,8 +119,7 @@ public class Weapon : Photon.MonoBehaviour
     public struct Stats
     {
         [Space(5)]
-        public float healthDamage;
-        public float shieldDamage;
+        public int damage;
 
         [Space(5)]
         public float fireTime;

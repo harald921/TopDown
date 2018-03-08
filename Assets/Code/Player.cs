@@ -20,9 +20,6 @@ public class Player : Photon.MonoBehaviour
 
     void Awake()
     {
-        if (!photonView.isMine)
-            return;
-
         movementComponent  = GetComponent<PlayerMovementComponent>();
         collisionComponent = GetComponent<PlayerCollisionComponent>();
         healthComponent    = GetComponent<PlayerHealthComponent>();
@@ -33,6 +30,9 @@ public class Player : Photon.MonoBehaviour
 
         movementComponent.ManualAwake();
         weaponComponent.ManualAwake();
+
+        if (!photonView.isMine)
+            return;
 
         FindObjectOfType<FollowCamera>().SetTargetPlayer(this);
     }

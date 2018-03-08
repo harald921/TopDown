@@ -185,12 +185,10 @@ MonoBehaviour:
   _projectilePrefab: {fileID: 1932406060625188, guid: 0bf01dd63f3c8a74198e3d0891dc27c7,
     type: 2}
   _stats:
-    healthDamage: 10
-    shieldDamage: 5
+    damage: 5
     fireTime: 0.12
     projectilesPerShot: 1
     projectileLifeTime: 3
-    firingAimingTime: 1
     spread: 0.03
     velocity: 120
     velocityInconsistency: 0.05

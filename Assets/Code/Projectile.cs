@@ -4,31 +4,34 @@ using UnityEngine;
 
 public class Projectile : Photon.MonoBehaviour
 {
-    [SerializeField] float _size = 0.1f;
+    [SerializeField] Type      _type;
+    [SerializeField] float     _size = 0.1f;
     [SerializeField] LayerMask _collidesWith;
 
+    int _damage;
     Vector3 _velocity;
     float _lifetime;
 
-
-    public void Initialize(float inLifetime, Vector3 inVelocity)
+    public void Initialize(int inDamage, float inLifetime, Vector3 inVelocity)
     {
+        _damage = inDamage;
         _lifetime = inLifetime;
         _velocity = inVelocity;
 
-        photonView.RPC("NetInitialize", PhotonTargets.Others, inLifetime, inVelocity, transform.position);
+        photonView.RPC("NetInitialize", PhotonTargets.Others, inDamage, inLifetime, inVelocity, transform.position);
     }
 
     [PunRPC]
-    void NetInitialize(float inLifetime, Vector3 inVelicity, Vector3 inOrigin, PhotonMessageInfo inInfo)
+    void NetInitialize(int inDamage, float inLifetime, Vector3 inVelocity, Vector3 inOrigin, PhotonMessageInfo inInfo)
     {
-        float netDelta = NetworkManager.CalculateNetDelta(inInfo.timestamp) * 3;
+        // float netDelta = NetworkManager.CalculateNetDelta(inInfo.timestamp) * 3;
 
-        _lifetime = inLifetime - netDelta;         
-        _velocity = inVelicity;
-        transform.position = inOrigin + (_velocity * netDelta);
+        _damage = inDamage;
+        _lifetime = inLifetime;         
+        _velocity = inVelocity;
+        transform.position = inOrigin;
 
-        CheckCollision(inOrigin, netDelta);
+        CheckCollision(inOrigin);
     }
 
     void Update()
@@ -37,6 +40,7 @@ public class Projectile : Photon.MonoBehaviour
         Move();
         ProgressLifetime();
     }
+
 
     void ProgressLifetime()
     {
@@ -65,15 +69,21 @@ public class Projectile : Photon.MonoBehaviour
         {
             Player hitPlayer = hitCollider.GetComponent<Player>();
             if (hitPlayer)
-            {
-                hitPlayer.photonView.RPC("ModifyHealth", PhotonTargets.All, -10);
-                Debug.Log("Temporary debug damage");
-            }
+                hitPlayer.healthComponent.photonView.RPC("DealDamage", PhotonTargets.All, _damage, _type);
         }
 
         Destroy(gameObject);
     }
+
+    public enum Type
+    {
+        None,
+
+        Ballistic,
+        Plasma
+    }
 }
+
 
 /*  Networked Bullet Alternatives
  *  

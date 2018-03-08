@@ -7,14 +7,15 @@ using MEC;
 public class PlayerHealthComponent : Photon.MonoBehaviour
 {
     [Header("Health")]
-    [SerializeField] float _maxHealth        = 45.0f;
-    [SerializeField] float _healthRegenDelay = 10.0f;
-    [SerializeField] float _healthRegenRate  = 9.0f;
+    [SerializeField] float _maxHealth                     = 45.0f;
+    [SerializeField] float _healthRegenDelay              = 10.0f;
+    [SerializeField] float _healthRegenRate               = 9.0f;
 
     [Header("Shield")]
-    [SerializeField] float _maxShield        = 70.0f;
-    [SerializeField] float _shieldRegenDelay = 4.25f;
-    [SerializeField] float _shieldRegenRate  = 40.0f;
+    [SerializeField] float _maxShield                     = 70.0f;
+    [SerializeField] float _shieldRegenDelay              = 4.25f;
+    [SerializeField] float _shieldRegenRate               = 40.0f;
+    [SerializeField] float _shieldBallisticDamageModifier = 0.7f;
 
     float _currentHealth;
     float currentHealth
@@ -50,26 +51,26 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     public delegate void ShieldChangeHandler(float inPreviousShield, float inCurrentShield);
     public event ShieldChangeHandler OnShieldChange;
 
+    PlayerRespawnComponent _respawnComponent;
+
     public event Action OnHealthDamage;
     public event Action OnShieldDamage;
     public event Action OnShieldBreak;
     public event Action OnDeath;
-
-    PlayerRespawnComponent _respawnComponent;
     
 
     void Awake()
     {
-        if (!photonView.isMine)
-            return;
-
         _respawnComponent = GetComponent<PlayerRespawnComponent>();
+
+        SubscribeEvents();
 
         RefreshHealthAndShield();
 
-        FindObjectOfType<ShieldBar>().Initialize(this, _maxShield);
+        if (!photonView.isMine)
+            return;
 
-        SubscribeEvents();
+        FindObjectOfType<ShieldBar>().Initialize(this, _maxShield);
     }
 
     void Update()
@@ -121,7 +122,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
 
     [PunRPC]
-    void DealDamage(int inDamage)
+    void DealDamage(int inDamage, Projectile.Type inDamageType = Projectile.Type.None)
     {
         // Return if negative damage is recieved
         if (inDamage <= 0)
@@ -132,6 +133,9 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         // Shield damage if shield is up
         if (_currentShield > 0)
         {
+            if (inDamageType == Projectile.Type.Ballistic)
+                remainingDamage *= _shieldBallisticDamageModifier;
+
             float previousShield = currentShield;
             currentShield -= remainingDamage;
 
