@@ -37,9 +37,9 @@ GameObject:
   - component: {fileID: 33791489980480890}
   - component: {fileID: 23717656427219496}
   - component: {fileID: 64445061814802406}
-  - component: {fileID: 114388227583343760}
   - component: {fileID: 114252649325028110}
   - component: {fileID: 54854666182836264}
+  - component: {fileID: 114105715866542166}
   m_Layer: 12
   m_Name: AssaultRifle
   m_TagString: Untagged
@@ -144,6 +144,31 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 641c99dcb785a8d4c8a6067a95531a67, type: 3}
+--- !u!114 &114105715866542166
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1794909459160882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3687de2212a8e9947867c5d5792cad2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 1
+  _muzzleTransform: {fileID: 4037923348010908}
+  _tracerPrefab: {fileID: 1021562394695872, guid: 8b6902d4efb7d6341b20528f93d33d7c,
+    type: 2}
+  _collidesWith:
+    serializedVersion: 2
+    m_Bits: 35840
+  _stats:
+    damage: 5
+    fireTime: 0.06
+    spread: 0.015
+    range: 30
+    maxAmmo: 400
+    reloadTime: 1
 --- !u!114 &114252649325028110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -170,27 +195,3 @@ MonoBehaviour:
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
---- !u!114 &114388227583343760
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1794909459160882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c616940fd5ef6b4181af59250ab97bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _firingMechanism: 0
-  _projectilePrefab: {fileID: 1932406060625188, guid: 0bf01dd63f3c8a74198e3d0891dc27c7,
-    type: 2}
-  _stats:
-    damage: 5
-    fireTime: 0.12
-    projectilesPerShot: 1
-    projectileLifeTime: 3
-    spread: 0.03
-    velocity: 120
-    velocityInconsistency: 0.05
-    maxAmmo: 20
-    reloadTime: 2

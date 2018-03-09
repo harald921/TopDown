@@ -1,87 +1,86 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 public class Projectile : Photon.MonoBehaviour
 {
-    [SerializeField] Type      _type;
-    [SerializeField] float     _size = 0.1f;
-    [SerializeField] LayerMask _collidesWith;
-
-    int _damage;
-    Vector3 _velocity;
-    float _lifetime;
-
-    public void Initialize(int inDamage, float inLifetime, Vector3 inVelocity)
-    {
-        _damage = inDamage;
-        _lifetime = inLifetime;
-        _velocity = inVelocity;
-
-        photonView.RPC("NetInitialize", PhotonTargets.Others, inDamage, inLifetime, inVelocity, transform.position);
-    }
-
-    [PunRPC]
-    void NetInitialize(int inDamage, float inLifetime, Vector3 inVelocity, Vector3 inOrigin, PhotonMessageInfo inInfo)
-    {
-        // float netDelta = NetworkManager.CalculateNetDelta(inInfo.timestamp) * 3;
-
-        _damage = inDamage;
-        _lifetime = inLifetime;         
-        _velocity = inVelocity;
-        transform.position = inOrigin;
-
-        CheckCollision(inOrigin);
-    }
-
-    void Update()
-    {
-        CheckCollision(transform.position);
-        Move();
-        ProgressLifetime();
-    }
-
-
-    void ProgressLifetime()
-    {
-        _lifetime -= Time.deltaTime;
-
-        if (_lifetime <= 0)
-            Destroy(gameObject);
-    }
-
-    void Move()
-    {
-        transform.position += _velocity * Time.deltaTime;
-    }
-
-    void CheckCollision(Vector3 inOrigin, float inNetDelta = 0)
-    {
-        RaycastHit[] hits = Physics.SphereCastAll(inOrigin, _size, _velocity.normalized, _velocity.magnitude * (Time.deltaTime + inNetDelta));
-        foreach (RaycastHit hit in hits)
-            if (_collidesWith.Contains(hit.collider.gameObject.layer))
-                OnCollision(hit.collider);
-    }
-
-    void OnCollision(Collider hitCollider)
-    {
-        if (photonView.isMine)
-        {
-            Player hitPlayer = hitCollider.GetComponent<Player>();
-            if (hitPlayer)
-                hitPlayer.healthComponent.photonView.RPC("DealDamage", PhotonTargets.All, _damage, _type);
-        }
-
-        Destroy(gameObject);
-    }
-
-    public enum Type
-    {
-        None,
-
-        Ballistic,
-        Plasma
-    }
+    // [SerializeField] float     _size = 0.1f;
+    // [SerializeField] LayerMask _collidesWith;
+    // 
+    // int _damage;
+    // Vector3 _velocity;
+    // float _lifetime;
+    // 
+    // CoroutineHandle _collisionHandle;
+    // 
+    // public void Initialize(int inDamage, float inLifetime, Vector3 inVelocity)
+    // {
+    //     _damage = inDamage;
+    //     _lifetime = inLifetime;
+    //     _velocity = inVelocity;
+    // 
+    //     photonView.RPC("NetInitialize", PhotonTargets.Others, inDamage, inLifetime, inVelocity, transform.position);
+    // }
+    // 
+    // [PunRPC]
+    // void NetInitialize(int inDamage, float inLifetime, Vector3 inVelocity, Vector3 inOrigin, PhotonMessageInfo inInfo)
+    // {
+    //     // float netDelta = NetworkManager.CalculateNetDelta(inInfo.timestamp) * 3;
+    // 
+    //     _damage = inDamage;
+    //     _lifetime = inLifetime;         
+    //     _velocity = inVelocity;
+    //     transform.position = inOrigin;
+    // 
+    //     CheckCollision(inOrigin);
+    // }
+    // 
+    // void Update()
+    // {
+    //     CheckCollision(transform.position);
+    //     Move();
+    //     ProgressLifetime();
+    // }
+    // 
+    // 
+    // void ProgressLifetime()
+    // {
+    //     _lifetime -= Time.deltaTime;
+    // 
+    //     if (_lifetime <= 0)
+    //         Destroy(gameObject);
+    // }
+    // 
+    // void Move()
+    // {
+    //     transform.position += _velocity * Time.deltaTime;
+    // }
+    // 
+    // void CheckCollision(Vector3 inOrigin, float inNetDelta = 0)
+    // {
+    //     RaycastHit[] hits = Physics.SphereCastAll(inOrigin, _size, _velocity.normalized, _velocity.magnitude * (Time.deltaTime + inNetDelta));
+    //     foreach (RaycastHit hit in hits)
+    //         if (_collidesWith.Contains(hit.collider.gameObject.layer))
+    //             _collisionHandle = Timing.RunCoroutineSingleton(_HandleCollision(hit.point, hit.collider), _collisionHandle, SingletonBehavior.Abort);
+    // }
+    // 
+    // IEnumerator<float> _HandleCollision(Vector3 inHitPoint, Collider hitCollider)
+    // {
+    //     _velocity = Vector3.zero;
+    //     transform.position = inHitPoint;
+    // 
+    //     if (photonView.isMine)
+    //     {
+    //         Player hitPlayer = hitCollider.GetComponent<Player>();
+    //         if (hitPlayer)
+    //             hitPlayer.healthComponent.photonView.RPC("DealDamage", PhotonTargets.All, _damage, _type);
+    //     }
+    // 
+    //     yield return Timing.WaitForOneFrame;
+    // 
+    //     Destroy(gameObject);
+    // }
 }
 
 

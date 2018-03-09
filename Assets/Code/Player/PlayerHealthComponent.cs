@@ -122,7 +122,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
 
     [PunRPC]
-    void DealDamage(int inDamage, Projectile.Type inDamageType = Projectile.Type.None)
+    void DealDamage(int inDamage, Weapon.Type inDamageType = Weapon.Type.None)
     {
         // Return if negative damage is recieved
         if (inDamage <= 0)
@@ -133,7 +133,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         // Shield damage if shield is up
         if (_currentShield > 0)
         {
-            if (inDamageType == Projectile.Type.Ballistic)
+            if (inDamageType == Weapon.Type.Ballistic)
                 remainingDamage *= _shieldBallisticDamageModifier;
 
             float previousShield = currentShield;

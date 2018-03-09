@@ -52,4 +52,5 @@ MonoBehaviour:
   - DealDamage
   - SetFlag
   - NetSetFlag
+  - _NetInitialize
   DisableAutoOpenWizard: 1
