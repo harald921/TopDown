@@ -30,7 +30,7 @@ public class PlayerInputComponent : Photon.MonoBehaviour
             movementDirection    = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")),
             aimTarget            = GetAimTarget(),
             mousePosition        = Input.mousePosition,
-            pullWeaponTrigger    = Input.GetMouseButton(0),
+            weaponTriggerPulled  = Input.GetMouseButton(0),
             reloadWeapon         = Input.GetKeyDown(KeyCode.R),
             pickUpWeapon         = Input.GetKeyDown(KeyCode.E),
             dropWeapon           = Input.GetKeyDown(KeyCode.G)
@@ -54,7 +54,7 @@ public class PlayerInputComponent : Photon.MonoBehaviour
         public Vector3 movementDirection;
         public Vector3 aimTarget;
         public Vector3 mousePosition;
-        public bool pullWeaponTrigger;
+        public bool weaponTriggerPulled;
         public bool pickUpWeapon;
         public bool reloadWeapon;
         public bool dropWeapon;

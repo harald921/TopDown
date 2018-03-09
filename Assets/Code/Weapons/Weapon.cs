@@ -2,21 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : Photon.MonoBehaviour
+public abstract class Weapon : Photon.MonoBehaviour
 {
     [SerializeField] protected Type _type;
+    [SerializeField] protected Transform _muzzleTransform;
+
     protected PlayerInputComponent _inputComponent;
 
-    // External
-    public void PickUp(Player inPlayer)
-    {
-        _inputComponent = inPlayer.inputComponent;
-    }
-
-    public void Drop()
-    {
-        _inputComponent = null;
-    }
+    public abstract void PickUp(PlayerInputComponent inInputComponent);
+    public abstract void Drop();
 
 
     public enum Type
@@ -25,5 +19,11 @@ public class Weapon : Photon.MonoBehaviour
 
         Ballistic,
         Plasma
+    }
+
+    public class Input
+    {
+        public bool triggerPulled;
+        public bool reload;
     }
 }

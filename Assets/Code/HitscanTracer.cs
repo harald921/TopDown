@@ -20,7 +20,6 @@ public class HitscanTracer : Photon.MonoBehaviour
     [PunRPC]
     public void _NetInitialize(Vector3[] inPoints)
     {
-        Debug.Log(inPoints.Length);
         _lineRenderer.positionCount = inPoints.Length;
         _lineRenderer.SetPositions(inPoints);
         Timing.RunCoroutine(_HandleFade());

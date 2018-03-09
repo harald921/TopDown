@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+#if !UNITY_4_6 && !UNITY_4_7 && !UNITY_5_0 && !UNITY_5_1 && !UNITY_5_2
 using UnityEngine.Assertions;
+#endif
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -10,7 +12,7 @@ using UnityEngine.Profiling;
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 //                              More Effective Coroutines Pro
-//                                        v3.01.2
+//                                        v3.01.4
 // 
 // This is an improved implementation of coroutines that boasts zero per-frame memory allocations,
 // runs about twice as fast as Unity's built in coroutines, and has a range of extra features.
@@ -212,6 +214,7 @@ namespace MEC
         private bool[] EndOfFramePaused = new bool[InitialBufferSizeSmall];
         private bool[] ManualTimeframePaused = new bool[InitialBufferSizeSmall];
 
+        private CoroutineHandle _eofWatcherHandle;
         private const ushort FramesUntilMaintenance = 64;
         private const int ProcessArrayChunkSize = 64;
         private const int InitialBufferSizeLarge = 256;
@@ -318,13 +321,15 @@ namespace MEC
 
                         if (!SlowUpdateProcesses[coindex.i].MoveNext())
                         {
-                            SlowUpdateProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (SlowUpdateProcesses[coindex.i] != null && float.IsNaN(SlowUpdateProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                SlowUpdateProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -361,13 +366,15 @@ namespace MEC
 
                         if (!RealtimeUpdateProcesses[coindex.i].MoveNext())
                         {
-                            RealtimeUpdateProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (RealtimeUpdateProcesses[coindex.i] != null && float.IsNaN(RealtimeUpdateProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                RealtimeUpdateProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -404,13 +411,15 @@ namespace MEC
 
                         if (!UpdateProcesses[coindex.i].MoveNext())
                         {
-                            UpdateProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (UpdateProcesses[coindex.i] != null && float.IsNaN(UpdateProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                UpdateProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -473,13 +482,15 @@ namespace MEC
 
                         if (!FixedUpdateProcesses[coindex.i].MoveNext())
                         {
-                            FixedUpdateProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (FixedUpdateProcesses[coindex.i] != null && float.IsNaN(FixedUpdateProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                FixedUpdateProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -522,13 +533,15 @@ namespace MEC
 
                         if (!LateUpdateProcesses[coindex.i].MoveNext())
                         {
-                            LateUpdateProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (LateUpdateProcesses[coindex.i] != null && float.IsNaN(LateUpdateProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                LateUpdateProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -577,13 +590,15 @@ namespace MEC
 
                         if (!ManualTimeframeProcesses[coindex.i].MoveNext())
                         {
-                            ManualTimeframeProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (ManualTimeframeProcesses[coindex.i] != null && float.IsNaN(ManualTimeframeProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                ManualTimeframeProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -668,13 +683,15 @@ namespace MEC
                     {
                         if (!EditorSlowUpdateProcesses[coindex.i].MoveNext())
                         {
-                            EditorSlowUpdateProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (EditorSlowUpdateProcesses[coindex.i] != null && float.IsNaN(EditorSlowUpdateProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                EditorSlowUpdateProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -701,13 +718,15 @@ namespace MEC
                     {
                         if (!EditorUpdateProcesses[coindex.i].MoveNext())
                         {
-                            EditorUpdateProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if (EditorUpdateProcesses[coindex.i] != null && float.IsNaN(EditorUpdateProcesses[coindex.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                EditorUpdateProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -773,13 +792,15 @@ namespace MEC
 
                         if(!EndOfFrameProcesses[coindex.i].MoveNext())
                         {
-                            EndOfFrameProcesses[coindex.i] = null;
+                            if (_indexToHandle.ContainsKey(coindex))
+                                KillCoroutinesOnInstance(_indexToHandle[coindex]);
                         }
                         else if(EndOfFrameProcesses[coindex.i] != null && float.IsNaN(EndOfFrameProcesses[coindex.i].Current))
                         {
                             if(ReplacementFunction == null)
                             {
-                                EndOfFrameProcesses[coindex.i] = null;
+                                if (_indexToHandle.ContainsKey(coindex))
+                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
                             }
                             else
                             {
@@ -2271,13 +2292,15 @@ namespace MEC
                     {
                         if (!UpdateProcesses[slot.i].MoveNext())
                         {
-                            UpdateProcesses[slot.i] = null;
+                            if (_indexToHandle.ContainsKey(slot))
+                                KillCoroutinesOnInstance(_indexToHandle[slot]);
                         }
                         else if (UpdateProcesses[slot.i] != null && float.IsNaN(UpdateProcesses[slot.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                UpdateProcesses[slot.i] = null;
+                                if (_indexToHandle.ContainsKey(slot))
+                                    KillCoroutinesOnInstance(_indexToHandle[slot]);
                             }
                             else
                             {
@@ -2326,13 +2349,15 @@ namespace MEC
                     {
                         if (!FixedUpdateProcesses[slot.i].MoveNext())
                         {
-                            FixedUpdateProcesses[slot.i] = null;
+                            if (_indexToHandle.ContainsKey(slot))
+                                KillCoroutinesOnInstance(_indexToHandle[slot]);
                         }
                         else if (FixedUpdateProcesses[slot.i] != null && float.IsNaN(FixedUpdateProcesses[slot.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                FixedUpdateProcesses[slot.i] = null;
+                                if (_indexToHandle.ContainsKey(slot))
+                                    KillCoroutinesOnInstance(_indexToHandle[slot]);
                             }
                             else
                             {
@@ -2381,13 +2406,15 @@ namespace MEC
                     {
                         if (!LateUpdateProcesses[slot.i].MoveNext())
                         {
-                            LateUpdateProcesses[slot.i] = null;
+                            if (_indexToHandle.ContainsKey(slot))
+                                KillCoroutinesOnInstance(_indexToHandle[slot]);
                         }
                         else if (LateUpdateProcesses[slot.i] != null && float.IsNaN(LateUpdateProcesses[slot.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                LateUpdateProcesses[slot.i] = null;
+                                if (_indexToHandle.ContainsKey(slot))
+                                    KillCoroutinesOnInstance(_indexToHandle[slot]);
                             }
                             else
                             {
@@ -2436,13 +2463,15 @@ namespace MEC
                     {
                         if (!SlowUpdateProcesses[slot.i].MoveNext())
                         {
-                            SlowUpdateProcesses[slot.i] = null;
+                            if (_indexToHandle.ContainsKey(slot))
+                                KillCoroutinesOnInstance(_indexToHandle[slot]);
                         }
                         else if (SlowUpdateProcesses[slot.i] != null && float.IsNaN(SlowUpdateProcesses[slot.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                SlowUpdateProcesses[slot.i] = null;
+                                if (_indexToHandle.ContainsKey(slot))
+                                    KillCoroutinesOnInstance(_indexToHandle[slot]);
                             }
                             else
                             {
@@ -2491,13 +2520,15 @@ namespace MEC
                     {
                         if (!RealtimeUpdateProcesses[slot.i].MoveNext())
                         {
-                            RealtimeUpdateProcesses[slot.i] = null;
+                            if (_indexToHandle.ContainsKey(slot))
+                                KillCoroutinesOnInstance(_indexToHandle[slot]);
                         }
                         else if (RealtimeUpdateProcesses[slot.i] != null && float.IsNaN(RealtimeUpdateProcesses[slot.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                RealtimeUpdateProcesses[slot.i] = null;
+                                if (_indexToHandle.ContainsKey(slot))
+                                    KillCoroutinesOnInstance(_indexToHandle[slot]);
                             }
                             else
                             {
@@ -2552,13 +2583,15 @@ namespace MEC
                     {
                         if (!EditorUpdateProcesses[slot.i].MoveNext())
                         {
-                            EditorUpdateProcesses[slot.i] = null;
+                            if (_indexToHandle.ContainsKey(slot))
+                                KillCoroutinesOnInstance(_indexToHandle[slot]);
                         }
                         else if (EditorUpdateProcesses[slot.i] != null && float.IsNaN(EditorUpdateProcesses[slot.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                EditorUpdateProcesses[slot.i] = null;
+                                if (_indexToHandle.ContainsKey(slot))
+                                    KillCoroutinesOnInstance(_indexToHandle[slot]);
                             }
                             else
                             {
@@ -2613,13 +2646,15 @@ namespace MEC
                     {
                         if (!EditorSlowUpdateProcesses[slot.i].MoveNext())
                         {
-                            EditorSlowUpdateProcesses[slot.i] = null;
+                            if (_indexToHandle.ContainsKey(slot))
+                                KillCoroutinesOnInstance(_indexToHandle[slot]);
                         }
                         else if (EditorSlowUpdateProcesses[slot.i] != null && float.IsNaN(EditorSlowUpdateProcesses[slot.i].Current))
                         {
                             if (ReplacementFunction == null)
                             {
-                                EditorSlowUpdateProcesses[slot.i] = null;
+                                if (_indexToHandle.ContainsKey(slot))
+                                    KillCoroutinesOnInstance(_indexToHandle[slot]);
                             }
                             else
                             {
@@ -2664,7 +2699,7 @@ namespace MEC
                     _indexToHandle.Add(slot, handle);
                     _handleToIndex.Add(handle, slot);
 
-                    RunCoroutineSingletonOnInstance(_EOFPumpWatcher(), "MEC_EOFPumpWatcher", SingletonBehavior.Abort);
+                    _eofWatcherHandle = RunCoroutineSingletonOnInstance(_EOFPumpWatcher(), _eofWatcherHandle, SingletonBehavior.Abort);
 
                     break;
 
@@ -4555,7 +4590,11 @@ namespace MEC
                 return float.NaN;
             }
 
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+            if (warnOnIssue) Debug.LogWarning("WaitUntilDone cannot hold: The coroutine handle that was passed in is invalid.\n" + otherCoroutine);
+#else
             Assert.IsFalse(warnOnIssue, "WaitUntilDone cannot hold: The coroutine handle that was passed in is invalid.\n" + otherCoroutine);
+#endif
 
             return 0f;
         }
@@ -4566,12 +4605,20 @@ namespace MEC
 
             if (handle == _tmpHandle)
             {
-                Assert.IsFalse(warnOnIssue, "A coroutine attempted to wait for itself.");
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+                if (warnOnIssue) Debug.LogWarning("A coroutine cannot wait for itself.");
+#else
+                Assert.IsFalse(warnOnIssue, "A coroutine cannot wait for itself.");
+#endif
                 return coptr;
             }
             if (handle.Key != _tmpHandle.Key)
             {
-                Assert.IsFalse(warnOnIssue, "A coroutine attempted to wait for a coroutine running on a different MEC instance.");
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+                if (warnOnIssue) Debug.LogWarning("A coroutine cannot wait for another coroutine on a different MEC instance.");
+#else
+                Assert.IsFalse(warnOnIssue, "A coroutine cannot wait for another coroutine on a different MEC instance.");
+#endif
                 return coptr;
             }
 
@@ -4594,13 +4641,21 @@ namespace MEC
             
             if(handle == otherHandle)
             {
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+                if (warnOnIssue) Debug.LogWarning("A coroutine cannot wait for itself.");
+#else
                 Assert.IsFalse(warnOnIssue, "A coroutine cannot wait for itself.");
+#endif
                 return;
             }
 
             if(handle.Key != otherHandle.Key)
             {
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+                if (warnOnIssue) Debug.LogWarning("A coroutine cannot wait for another coroutine on a different MEC instance.");
+#else
                 Assert.IsFalse(warnOnIssue, "A coroutine cannot wait for another coroutine on a different MEC instance.");
+#endif
                 return;
             }
 
@@ -4642,13 +4697,21 @@ namespace MEC
 
                 if (handle == othersEnum.Current)
                 {
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+                    if (warnOnIssue) Debug.LogWarning("A coroutine cannot wait for itself.");
+#else
                     Assert.IsFalse(warnOnIssue, "A coroutine cannot wait for itself.");
+#endif
                     continue;
                 }
 
                 if (handle.Key != othersEnum.Current.Key)
                 {
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+                    if (warnOnIssue) Debug.LogWarning("A coroutine cannot wait for another coroutine on a different MEC instance.");
+#else
                     Assert.IsFalse(warnOnIssue, "A coroutine cannot wait for another coroutine on a different MEC instance.");
+#endif
                     continue;
                 }
 
@@ -5070,11 +5133,12 @@ namespace MEC
         /// </summary>
         /// <param name="delay">The number of seconds to wait before calling the action.</param>
         /// <param name="action">The action to call.</param>
-        /// <param name="cancelWith">A GameObject that will be checked to make sure it hasn't been destroyed before calling the action.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed 
+        /// before calling the action.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
-        public static CoroutineHandle CallDelayed(float delay, System.Action action, GameObject cancelWith)
+        public static CoroutineHandle CallDelayed(float delay, System.Action action, GameObject gameObject)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._DelayedCall(delay, action, cancelWith));
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._DelayedCall(delay, action, gameObject), gameObject);
         }
 
         /// <summary>
@@ -5082,11 +5146,12 @@ namespace MEC
         /// </summary>
         /// <param name="delay">The number of seconds to wait before calling the action.</param>
         /// <param name="action">The action to call.</param>
-        /// <param name="cancelWith">A GameObject that will be checked to make sure it hasn't been destroyed before calling the action.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed 
+        /// before calling the action.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
-        public CoroutineHandle CallDelayedOnInstance(float delay, System.Action action, GameObject cancelWith)
+        public CoroutineHandle CallDelayedOnInstance(float delay, System.Action action, GameObject gameObject)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_DelayedCall(delay, action, cancelWith));
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_DelayedCall(delay, action, gameObject), gameObject);
         }
 
         private IEnumerator<float> _DelayedCall(float delay, System.Action action, GameObject cancelWith)
@@ -5100,33 +5165,63 @@ namespace MEC
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public static CoroutineHandle CallPeriodically(float timeframe, float period, System.Action action, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, period, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, period, action, null, onDone));
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public CoroutineHandle CallPeriodicallyOnInstance(float timeframe, float period, System.Action action, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, period, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, period, action, null, onDone));
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallPeriodically(float timeframe, float period, System.Action action, GameObject gameObject, System.Action onDone = null)
+        {
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, period, action, gameObject, onDone));
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallPeriodicallyOnInstance(float timeframe, float period, System.Action action, GameObject gameObject, System.Action onDone = null)
+        {
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, period, action, gameObject, onDone));
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
@@ -5134,13 +5229,13 @@ namespace MEC
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public static CoroutineHandle CallPeriodically(float timeframe, float period, System.Action action, Segment timing, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, period, action, onDone), timing);
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, period, action, null, onDone), timing);
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
@@ -5148,67 +5243,162 @@ namespace MEC
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public CoroutineHandle CallPeriodicallyOnInstance(float timeframe, float period, System.Action action, Segment timing, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, period, action, onDone), timing);
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, period, action, null, onDone), timing);
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallPeriodically(float timeframe, float period, System.Action action, Segment timing, 
+            GameObject gameObject, System.Action onDone = null)
+        {
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, period, action, gameObject, onDone), timing);
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallPeriodicallyOnInstance(float timeframe, float period, System.Action action, Segment timing,
+            GameObject gameObject, System.Action onDone = null)
+        {
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, period, action, gameObject, onDone), timing);
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public static CoroutineHandle CallContinuously(float timeframe, System.Action action, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, 0f, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, 0f, action, null, onDone));
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public CoroutineHandle CallContinuouslyOnInstance(float timeframe, System.Action action, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, 0f, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, 0f, action, null, onDone));
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallContinuously(float timeframe, System.Action action, GameObject gameObject, System.Action onDone = null)
+        {
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, 0f, action, gameObject, onDone), gameObject);
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallContinuouslyOnInstance(float timeframe, System.Action action, GameObject gameObject, System.Action onDone = null)
+        {
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, 0f, action, gameObject, onDone), gameObject);
         }
 
         /// <summary>
         /// Calls the supplied action every frame for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public static CoroutineHandle CallContinuously(float timeframe, System.Action action, Segment timing, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, 0f, action, onDone), timing);
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, 0f, action, null, onDone), timing);
         }
 
         /// <summary>
         /// Calls the supplied action every frame for a given number of seconds.
         /// </summary>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public CoroutineHandle CallContinuouslyOnInstance(float timeframe, System.Action action, Segment timing, System.Action onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, 0f, action, onDone), timing);
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, 0f, action, null, onDone), timing);
         }
 
-        private IEnumerator<float> _CallContinuously(float timeframe, float period, System.Action action, System.Action onDone)
+        /// <summary>
+        /// Calls the supplied action every frame for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallContinuously(float timeframe, System.Action action, Segment timing, 
+            GameObject gameObject, System.Action onDone = null)
         {
-            double startTime = localTime;
-            while (localTime <= startTime + timeframe)
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(timeframe, 0f, action, gameObject, onDone), timing);
+        }
+
+        /// <summary>
+        /// Calls the supplied action every frame for a given number of seconds.
+        /// </summary>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallContinuouslyOnInstance(float timeframe, System.Action action, Segment timing, 
+            GameObject gameObject, System.Action onDone = null)
+        {
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(timeframe, 0f, action, gameObject, onDone), timing);
+        }
+
+        private IEnumerator<float> _CallContinuously(float timeframe, float period, System.Action action, GameObject gObject, System.Action onDone)
+        {
+            float startTime = localTime;
+            while ((ReferenceEquals(gObject, null) || gObject != null) && localTime <= startTime + timeframe)
             {
                 yield return WaitForSecondsOnInstance(period);
 
-                action();
+                if (gObject != null && gObject.activeInHierarchy)
+                    action();
             }
 
             if (onDone != null)
@@ -5219,7 +5409,7 @@ namespace MEC
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
@@ -5227,14 +5417,14 @@ namespace MEC
         public static CoroutineHandle CallPeriodically<T>(T reference, float timeframe, float period, 
             System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, null, onDone));
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
@@ -5242,14 +5432,50 @@ namespace MEC
         public CoroutineHandle CallPeriodicallyOnInstance<T>(T reference, float timeframe, float period, 
             System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, null, onDone));
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallPeriodically<T>(T reference, float timeframe, float period,
+            System.Action<T> action, GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, gameObject, onDone), gameObject);
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallPeriodicallyOnInstance<T>(T reference, float timeframe, float period,
+            System.Action<T> action, GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, gameObject, onDone), gameObject);
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
@@ -5258,14 +5484,15 @@ namespace MEC
         public static CoroutineHandle CallPeriodically<T>(T reference, float timeframe, float period, System.Action<T> action, 
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, onDone), timing);
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, null, onDone), timing);
         }
 
         /// <summary>
         /// Calls the supplied action at the given rate for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="period">The amount of time between calls.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
@@ -5274,40 +5501,113 @@ namespace MEC
         public CoroutineHandle CallPeriodicallyOnInstance<T>(T reference, float timeframe, float period, System.Action<T> action,
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, onDone), timing);
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, null, onDone), timing);
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallPeriodically<T>(T reference, float timeframe, float period, System.Action<T> action,
+            Segment timing, GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, gameObject, onDone), timing, gameObject);
+        }
+
+        /// <summary>
+        /// Calls the supplied action at the given rate for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each period.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="period">The amount of time between calls.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallPeriodicallyOnInstance<T>(T reference, float timeframe, float period, System.Action<T> action,
+            Segment timing, GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, gameObject, onDone), timing, gameObject);
         }
 
         /// <summary>
         /// Calls the supplied action every frame for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public static CoroutineHandle CallContinuously<T>(T reference, float timeframe, System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, null, onDone));
         }
 
         /// <summary>
         /// Calls the supplied action every frame for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public CoroutineHandle CallContinuouslyOnInstance<T>(T reference, float timeframe, System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, onDone), Segment.Update);
+            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, null, onDone));
         }
 
         /// <summary>
         /// Calls the supplied action every frame for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallContinuously<T>(T reference, float timeframe, System.Action<T> action, 
+            GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, gameObject, onDone), gameObject);
+        }
+
+        /// <summary>
+        /// Calls the supplied action every frame for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallContinuouslyOnInstance<T>(T reference, float timeframe, System.Action<T> action, 
+            GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, gameObject, onDone), gameObject);
+        }
+
+        /// <summary>
+        /// Calls the supplied action every frame for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
@@ -5315,14 +5615,15 @@ namespace MEC
         public static CoroutineHandle CallContinuously<T>(T reference, float timeframe, System.Action<T> action, 
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, onDone), timing);
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, null, onDone), timing);
         }
 
         /// <summary>
         /// Calls the supplied action every frame for a given number of seconds.
         /// </summary>
         /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
-        /// <param name="timeframe">The number of seconds that this function should run.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
         /// <param name="action">The action to call every frame.</param>
         /// <param name="timing">The timing segment to run in.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
@@ -5330,18 +5631,56 @@ namespace MEC
         public CoroutineHandle CallContinuouslyOnInstance<T>(T reference, float timeframe, System.Action<T> action,
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, onDone), timing);
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, null, onDone), timing);
+        }
+
+        /// <summary>
+        /// Calls the supplied action every frame for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public static CoroutineHandle CallContinuously<T>(T reference, float timeframe, System.Action<T> action,
+            Segment timing, GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, gameObject, onDone), timing, gameObject);
+        }
+
+        /// <summary>
+        /// Calls the supplied action every frame for a given number of seconds.
+        /// </summary>
+        /// <param name="reference">A value that will be passed in to the supplied action each frame.</param>
+        /// <param name="timeframe">The number of seconds that this function should run. Use float.PositiveInfinity to run indefinitely.</param>
+        /// <param name="action">The action to call every frame.</param>
+        /// <param name="timing">The timing segment to run in.</param>
+        /// <param name="gameObject">A GameObject that will be tagged onto the coroutine and checked to make sure it hasn't been destroyed or disabled
+        /// before calling the action.</param>
+        /// <param name="onDone">An optional action to call when this function finishes.</param>
+        /// <returns>The handle to the coroutine that is started by this function.</returns>
+        public CoroutineHandle CallContinuouslyOnInstance<T>(T reference, float timeframe, System.Action<T> action,
+            Segment timing, GameObject gameObject, System.Action<T> onDone = null)
+        {
+            return action == null ? new CoroutineHandle() 
+                : RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, gameObject, onDone), timing, gameObject);
         }
 
         private IEnumerator<float> _CallContinuously<T>(T reference, float timeframe, float period,
-            System.Action<T> action, System.Action<T> onDone = null)
+            System.Action<T> action, GameObject gObject, System.Action<T> onDone)
         {
-            double startTime = localTime;
-            while (localTime <= startTime + timeframe)
+            float startTime = localTime;
+            while ((ReferenceEquals(gObject, null) || gObject != null) && localTime <= startTime + timeframe)
             {
                 yield return WaitForSecondsOnInstance(period);
 
-                action(reference);
+                if (gObject != null && gObject.activeInHierarchy)
+                    action(reference);
             }
 
             if (onDone != null)

@@ -29,7 +29,6 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         HandleWeaponPickup();
     }
 
-
     void HandleWeaponPickup()
     {
         if (_inputComponent.input.pickUpWeapon)
@@ -60,7 +59,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         weaponToPickup.GetComponent<Rigidbody>().isKinematic = true;
 
         _heldWeapon = weaponToPickup;
-        _heldWeapon.PickUp(_player);
+        _heldWeapon.PickUp(_inputComponent);
     }
 
     [PunRPC]
