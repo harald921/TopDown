@@ -75,12 +75,16 @@ public class HitscanMagazineWeapon : Weapon
 
     void Fire()
     {
-        List<Vector3> hitPoints;
-        Collider hitCollider = HitScan(out hitPoints);
+        Collider hitCollider = MuzzleOverlapSphere();
+
+        if (!hitCollider)
+        {
+            List<Vector3> hitPoints;
+            hitCollider = HitScan(out hitPoints);
+            SpawnTracer(hitPoints);
+        }
 
         hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, _stats.damage, _type);
-
-        SpawnTracer(hitPoints);
 
         _currentAmmo--;
     }
@@ -99,8 +103,17 @@ public class HitscanMagazineWeapon : Weapon
             outHitPoints.Add(hit.point);
         else
             outHitPoints.Add(_muzzleTransform.position + (projectileDirection * _stats.range));
-            
+
         return hit.collider;
+    }
+
+    Collider MuzzleOverlapSphere()
+    {
+        Collider[] collidersCoveringMuzzle = Physics.OverlapSphere(_muzzleTransform.position, float.Epsilon, _collidesWith);
+        if (collidersCoveringMuzzle.Length > 0)
+            return collidersCoveringMuzzle[0];
+        else
+            return null;
     }
 
     void SpawnTracer(List<Vector3> inPoints)
