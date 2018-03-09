@@ -12,6 +12,7 @@ public class PlayerRespawnComponent : MonoBehaviour
     GameObject _graphicsGO;
     SpawnLocation[] _spawnLocations;
 
+    Player _player;
     PlayerHealthComponent _healthComponent;
     PlayerFlagComponent _flagComponent;
 
@@ -20,6 +21,7 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     void Awake()
     {
+        _player = GetComponent<Player>();
         _healthComponent = GetComponent<PlayerHealthComponent>();
         _flagComponent = GetComponent<PlayerFlagComponent>();
 
@@ -32,6 +34,7 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     void SubscribeEvents()
     {
+        _player.OnPlayerCreated += () => Timing.RunCoroutine(_HandleRespawn());
         _healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
 
         // Despawning and Spawning
@@ -46,7 +49,7 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     SpawnLocation[] GetAllSpawnLocations()
     {
-        return _spawnLocationsParent.GetComponentsInChildren<SpawnLocation>();
+        return GameObject.Find("SpawnLocations").GetComponentsInChildren<SpawnLocation>();
     }
 
     IEnumerator<float> _HandleRespawn()

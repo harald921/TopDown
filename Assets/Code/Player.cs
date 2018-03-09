@@ -17,6 +17,7 @@ public class Player : Photon.MonoBehaviour
     public PlayerWeaponComponent    weaponComponent     { get; private set; }
     public PlayerFlagComponent      flagComponent       { get; private set; }
 
+    public event Action OnPlayerCreated;
 
     void Awake()
     {
@@ -35,6 +36,11 @@ public class Player : Photon.MonoBehaviour
             return;
 
         FindObjectOfType<FollowCamera>().SetTargetPlayer(this);
+    }
+
+    void Start()
+    {
+        OnPlayerCreated?.Invoke();
     }
 
     void Update()

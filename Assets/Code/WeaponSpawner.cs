@@ -13,11 +13,6 @@ public class WeaponSpawner : Photon.MonoBehaviour
     float _timer = 0.0f;
 
 
-    void Awake()
-    {
-        _timer = _spawnInterval;    
-    }
-
     void Update()
     {
         if (!PhotonNetwork.isMasterClient)

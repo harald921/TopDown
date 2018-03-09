@@ -92,7 +92,6 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
                 OnShieldDamage?.Invoke();
         };
 
-
         // Health and Shield regen
         OnHealthDamage += () => {
             _healthRegenHandle = Timing.RunCoroutineSingleton(_HandleHealthRegen(), _healthRegenHandle, SingletonBehavior.Overwrite);
@@ -100,6 +99,18 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         };
 
         OnShieldDamage += () => { _shieldRegenHandle = Timing.RunCoroutineSingleton(_HandleShieldRegen(), _shieldRegenHandle, SingletonBehavior.Overwrite); };
+
+        // Death and Respawn
+        OnDeath += () => {
+            Timing.KillCoroutines(_shieldRegenHandle);
+            Timing.KillCoroutines(_healthRegenHandle);
+        };
+
+        _respawnComponent.OnRespawn += RefreshHealthAndShield;
+
+
+        if (!photonView.isMine)
+            return;
 
 
         // Camera shake and Camera punch when taking damage
@@ -110,14 +121,6 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         OnHealthDamage += () => { cameraPuncher.AddTrauma(0.5f); };              
         OnShieldDamage += () => { cameraShaker.AddTrauma(Vector3.one * 0.4f); }; 
 
-
-        // Death and Respawn
-        OnDeath += () => {
-            Timing.KillCoroutines(_shieldRegenHandle);
-            Timing.KillCoroutines(_healthRegenHandle);
-        };
-
-        _respawnComponent.OnRespawn += RefreshHealthAndShield;
     }
 
 

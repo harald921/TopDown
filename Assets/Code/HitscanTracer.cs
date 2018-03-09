@@ -47,7 +47,5 @@ public class HitscanTracer : Photon.MonoBehaviour
         Color fadeColor = _lineRenderer.material.color;
         fadeColor.a = Mathf.InverseLerp(1, 0, inFadeProgress);
         _lineRenderer.material.color = fadeColor;
-
-        Debug.Log(_lineRenderer.material.color.a);
     }
 }

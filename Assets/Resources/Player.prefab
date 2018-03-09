@@ -529,7 +529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotationTransform: {fileID: 4831765480635312}
-  _moveSpeed: 5
+  _moveSpeed: 7
   _rotationTime: 0.05
 --- !u!114 &114844783418726794
 MonoBehaviour:

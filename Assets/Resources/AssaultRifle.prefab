@@ -163,12 +163,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 35840
   _stats:
-    damage: 5
-    fireTime: 0.06
-    spread: 0.015
+    damage: 3
+    fireTime: 0.066
+    spread: 0.03
     range: 30
-    maxAmmo: 400
-    reloadTime: 1
+    maxAmmo: 30
+    reloadTime: 3
 --- !u!114 &114252649325028110
 MonoBehaviour:
   m_ObjectHideFlags: 1
