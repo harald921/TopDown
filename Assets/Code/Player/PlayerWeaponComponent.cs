@@ -24,7 +24,8 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         _collisionComponent = _player.collisionComponent;
         _inputComponent     = _player.inputComponent;
 
-        OnWeaponFire += () => { Debug.Log("OnWeaponFire"); };
+        if (!photonView.isMine)
+            return;
 
         _player.healthComponent.OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
     }
