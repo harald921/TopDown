@@ -35,6 +35,13 @@ public class CameraPuncher : MonoBehaviour
         _trauma = Mathf.Clamp01(_trauma);
     }
 
+    float CalculatePunchStrength()
+    {
+        float punchAmount = Mathf.Pow(_trauma, _falloffExponent);
+        punchAmount *= _punchStrengthMultiplier;
+
+        return punchAmount;
+    }
 
     void SetCurrentPunchAmount(float inPunchPower)
     {
@@ -42,14 +49,6 @@ public class CameraPuncher : MonoBehaviour
         currentPunchFieldOfView = Mathf.Clamp(currentPunchFieldOfView, _minFieldOfView, _defaultFieldOfView);
 
         _mainCamera.fieldOfView = currentPunchFieldOfView;
-    }
-
-    float CalculatePunchStrength()
-    {
-        float punchAmount = Mathf.Pow(_trauma, _falloffExponent);
-        punchAmount *= _punchStrengthMultiplier;
-
-        return punchAmount;
     }
 
     void HandleTraumaFalloff()

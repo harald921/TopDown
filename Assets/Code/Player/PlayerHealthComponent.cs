@@ -117,10 +117,12 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         CameraShaker  cameraShaker  = FindObjectOfType<CameraShaker>();
         CameraPuncher cameraPuncher = FindObjectOfType<CameraPuncher>();
 
-        OnHealthDamage += () => { cameraShaker.AddTrauma(Vector3.one * 0.25f); }; 
-        OnHealthDamage += () => { cameraPuncher.AddTrauma(0.3f); };              
-        OnShieldDamage += () => { cameraShaker.AddTrauma(Vector3.one * 0.25f); }; 
+        OnHealthDamage += () => {
+            cameraShaker.AddTrauma(Vector3.one * 0.25f);
+            cameraPuncher.AddTrauma(0.3f);
+        };
 
+        OnShieldDamage += () => cameraShaker.AddTrauma(Vector3.one * 0.25f);  
     }
 
 

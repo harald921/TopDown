@@ -14,10 +14,12 @@ public abstract class Weapon : Photon.MonoBehaviour
 
     public abstract void PickUp(PlayerInputComponent inInputComponent);
     public abstract void Drop();
+
     protected void TryInvokeOnFire()
     {
         OnFire?.Invoke();
     }
+
 
     public enum Type
     {
@@ -25,11 +27,5 @@ public abstract class Weapon : Photon.MonoBehaviour
 
         Ballistic,
         Plasma
-    }
-
-    public class Input
-    {
-        public bool triggerPulled;
-        public bool reload;
     }
 }
