@@ -98,7 +98,7 @@ public class PlayerMovementComponent : Photon.MonoBehaviour
             _player.healthComponent.OnHealthDamage += () => AddTrauma(0.1f);
             _player.healthComponent.OnShieldDamage += () => AddTrauma(0.05f);
 
-            _player.weaponComponent.OnWeaponFire   += () => AddTrauma(0.5f);
+            _player.weaponComponent.OnWeaponFire   += () => AddTrauma(_player.weaponComponent.heldWeapon.stats.recoilMoveSlow);
         }
 
         public void ManualUpdate()

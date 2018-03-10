@@ -5,10 +5,10 @@ using MEC;
 
 public class HitscanMagazineWeapon : Weapon
 {
-    [SerializeField] GameObject _tracerPrefab;
-    [SerializeField] LayerMask  _collidesWith;
-    [SerializeField] Stats      _stats;
-    [SerializeField] bool       _semiAuto;
+    [SerializeField] GameObject    _tracerPrefab;
+    [SerializeField] LayerMask     _collidesWith;
+    [SerializeField] SpecificStats _specificStats;
+    [SerializeField] bool          _semiAuto;
 
     int _currentAmmo;
 
@@ -18,7 +18,7 @@ public class HitscanMagazineWeapon : Weapon
 
     void Awake()
     {
-        _currentAmmo = _stats.maxAmmo;
+        _currentAmmo = stats.maxAmmo;
     }
 
     void Update()
@@ -58,19 +58,19 @@ public class HitscanMagazineWeapon : Weapon
         while (_semiAuto && _inputComponent.input.weaponTriggerPulled)
             yield return Timing.WaitForOneFrame;
 
-        yield return Timing.WaitForSeconds(_stats.fireTime);
+        yield return Timing.WaitForSeconds(stats.fireTime);
     }
 
     IEnumerator<float> _HandleReload()
     {
-        yield return Timing.WaitForSeconds(_stats.reloadTime);
+        yield return Timing.WaitForSeconds(stats.reloadTime);
         Reload();
     }
 
 
     void Reload()
     {
-        _currentAmmo = _stats.maxAmmo;
+        _currentAmmo = stats.maxAmmo;
     }
 
     void Fire()
@@ -84,7 +84,7 @@ public class HitscanMagazineWeapon : Weapon
             SpawnTracer(hitPoints);
         }
 
-        hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, _stats.damage, _type);
+        hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, stats.damage, _type);
 
         TryInvokeOnFire();
 
@@ -100,10 +100,10 @@ public class HitscanMagazineWeapon : Weapon
         };
 
         RaycastHit hit;
-        if (Physics.Raycast(_muzzleTransform.position, projectileDirection, out hit, _stats.range, _collidesWith))
+        if (Physics.Raycast(_muzzleTransform.position, projectileDirection, out hit, _specificStats.range, _collidesWith))
             outHitPoints.Add(hit.point);
         else
-            outHitPoints.Add(_muzzleTransform.position + (projectileDirection * _stats.range));
+            outHitPoints.Add(_muzzleTransform.position + (projectileDirection * _specificStats.range));
 
         return hit.collider;
     }
@@ -127,25 +127,16 @@ public class HitscanMagazineWeapon : Weapon
     {
         Vector3 projectileSpread = new Vector3()
         {
-            x = Random.Range(-_stats.spread, _stats.spread),
-            z = Random.Range(-_stats.spread, _stats.spread)
+            x = Random.Range(-stats.spread, stats.spread),
+            z = Random.Range(-stats.spread, stats.spread)
         };
 
         return _muzzleTransform.forward + projectileSpread;
     }
    
-
     [System.Serializable]
-    public struct Stats
+    public struct SpecificStats
     {
-        [Space(5)]
-        public int   damage;
-        public float fireTime;
-        public float spread;
         public float range;
-
-        [Space(5)]
-        public int   maxAmmo;
-        public float reloadTime;
     }
 }
