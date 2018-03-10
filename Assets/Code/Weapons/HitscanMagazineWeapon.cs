@@ -14,7 +14,7 @@ public class HitscanMagazineWeapon : Weapon
 
     CoroutineHandle _fireHandle;
     CoroutineHandle _reloadHandle;
-    
+
 
     void Awake()
     {
@@ -86,9 +86,10 @@ public class HitscanMagazineWeapon : Weapon
 
         hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, _stats.damage, _type);
 
+        TryInvokeOnFire();
+
         _currentAmmo--;
     }
-
 
     Collider HitScan(out List<Vector3> outHitPoints)
     {

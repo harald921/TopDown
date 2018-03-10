@@ -169,6 +169,7 @@ MonoBehaviour:
     range: 30
     maxAmmo: 30
     reloadTime: 3
+  _semiAuto: 0
 --- !u!114 &114252649325028110
 MonoBehaviour:
   m_ObjectHideFlags: 1

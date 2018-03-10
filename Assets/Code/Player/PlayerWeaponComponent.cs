@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,20 +15,25 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     PlayerCollisionComponent _collisionComponent;
     PlayerInputComponent     _inputComponent;
 
+    public event Action OnWeaponFire;
+
+
     public void ManualAwake()
     {
         _player             = GetComponent<Player>();
         _collisionComponent = _player.collisionComponent;
         _inputComponent     = _player.inputComponent;
 
+        OnWeaponFire += () => { Debug.Log("OnWeaponFire"); };
+
         _player.healthComponent.OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
     }
-
 
     public void ManualUpdate()
     {
         HandleWeaponPickup();
     }
+
 
     void HandleWeaponPickup()
     {
@@ -60,6 +66,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
 
         _heldWeapon = weaponToPickup;
         _heldWeapon.PickUp(_inputComponent);
+        _heldWeapon.OnFire += OnWeaponFire;
     }
 
     [PunRPC]
@@ -69,6 +76,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         weaponRigidbody.isKinematic = false;
         weaponRigidbody.AddTorque(_heldWeapon.transform.forward * 4.0f);
 
+        _heldWeapon.OnFire -= OnWeaponFire;
         _heldWeapon.Drop();
         _heldWeapon.transform.SetParent(null);
         _heldWeapon = null;
