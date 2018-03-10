@@ -22,7 +22,6 @@ public class CameraShaker : MonoBehaviour
         _defaultRotation = transform.eulerAngles;
     }
 
-
     void Update()
     {
         _mainCamera.transform.eulerAngles = _defaultRotation + CalculateShakeAngle(CalculateShakeAmount()); 
@@ -30,6 +29,11 @@ public class CameraShaker : MonoBehaviour
         HandleTraumaFalloff();
     }
 
+    public void Initialize(PlayerHealthComponent inHealthComponent)
+    {
+        inHealthComponent.OnHealthDamage += () => AddTrauma(Vector3.one * 0.25f);
+        inHealthComponent.OnShieldDamage += () => AddTrauma(Vector3.one * 0.20f);
+    }
 
     Vector3 CalculateShakeAmount()
     {

@@ -107,22 +107,6 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         };
 
         _respawnComponent.OnRespawn += RefreshHealthAndShield;
-
-
-        if (!photonView.isMine)
-            return;
-
-
-        // Camera shake and Camera punch when taking damage
-        CameraShaker  cameraShaker  = FindObjectOfType<CameraShaker>();
-        CameraPuncher cameraPuncher = FindObjectOfType<CameraPuncher>();
-
-        OnHealthDamage += () => {
-            cameraShaker.AddTrauma(Vector3.one * 0.25f);
-            cameraPuncher.AddTrauma(0.3f);
-        };
-
-        OnShieldDamage += () => cameraShaker.AddTrauma(Vector3.one * 0.25f);  
     }
 
 

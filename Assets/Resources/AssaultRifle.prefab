@@ -157,18 +157,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _type: 1
   _muzzleTransform: {fileID: 4037923348010908}
+  _stats:
+    damage: 3
+    fireTime: 0.066
+    spread: 0.03
+    recoilMoveSlow: 0.04
+    camShakeOnFireAmount: 0.04
+    maxAmmo: 30
+    reloadTime: 3
   _tracerPrefab: {fileID: 1021562394695872, guid: 8b6902d4efb7d6341b20528f93d33d7c,
     type: 2}
   _collidesWith:
     serializedVersion: 2
     m_Bits: 35840
-  _stats:
-    damage: 3
-    fireTime: 0.066
-    spread: 0.03
+  _specificStats:
     range: 30
-    maxAmmo: 30
-    reloadTime: 3
   _semiAuto: 0
 --- !u!114 &114252649325028110
 MonoBehaviour:

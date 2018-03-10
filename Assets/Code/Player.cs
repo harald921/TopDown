@@ -35,7 +35,7 @@ public class Player : Photon.MonoBehaviour
         if (!photonView.isMine)
             return;
 
-        FindObjectOfType<FollowCamera>().SetTargetPlayer(this);
+        FindObjectOfType<CameraManager>().Initialize(this);
     }
 
     void Start()

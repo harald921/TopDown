@@ -21,11 +21,15 @@ public class CameraPuncher : MonoBehaviour
         _defaultFieldOfView = _mainCamera.fieldOfView;
     }
 
-
     void Update()
     {
         SetCurrentPunchAmount(CalculatePunchStrength());
         HandleTraumaFalloff();
+    }
+
+    public void Initialize(PlayerHealthComponent inHealthComponent)
+    {
+        inHealthComponent.OnHealthDamage += () => AddTrauma(0.3f);
     }
 
 
