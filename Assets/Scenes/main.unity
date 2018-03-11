@@ -812,7 +812,7 @@ MonoBehaviour:
   _shader: {fileID: 4800000, guid: 1899c349878167040bd0fd1c3cfc7c79, type: 3}
   _maxBloodAmount: 0.5
   _edgeSharpness: 1
-  _distortion: 0.05
+  _distortion: 0.02
 --- !u!1001 &745804358
 Prefab:
   m_ObjectHideFlags: 0
