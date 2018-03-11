@@ -110,7 +110,6 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         _respawnComponent.OnRespawn += RefreshHealthAndShield;
     }
 
-    z§
     [PunRPC]
     void DealDamage(int inDamage, Weapon.Type inDamageType = Weapon.Type.None)
     {

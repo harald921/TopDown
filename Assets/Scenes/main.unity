@@ -808,11 +808,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _image: {fileID: 2800000, guid: 07536878954ee034295e46c482f9ddae, type: 3}
-  _normals: {fileID: 2800000, guid: e61641f0d07f8804990c8bdaca0318e2, type: 3}
+  _normals: {fileID: 2800000, guid: d6a4e510717eae7478cfc7e28099e214, type: 3}
   _shader: {fileID: 4800000, guid: 1899c349878167040bd0fd1c3cfc7c79, type: 3}
-  _maxBloodAmount: 1
+  _maxBloodAmount: 0.5
   _edgeSharpness: 1
-  _distortion: 0.2
+  _distortion: 0.05
 --- !u!1001 &745804358
 Prefab:
   m_ObjectHideFlags: 0
