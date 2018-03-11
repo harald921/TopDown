@@ -71,6 +71,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             return;
 
         FindObjectOfType<ShieldBar>().Initialize(this, _maxShield);
+        FindObjectOfType<CameraBloodEffect>().Initialize(this, _maxHealth);
     }
 
     void Update()
@@ -109,7 +110,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         _respawnComponent.OnRespawn += RefreshHealthAndShield;
     }
 
-
+    z§
     [PunRPC]
     void DealDamage(int inDamage, Weapon.Type inDamageType = Weapon.Type.None)
     {
