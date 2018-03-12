@@ -16,8 +16,7 @@ public class PlayerRespawnComponent : MonoBehaviour
     PlayerHealthComponent _healthComponent;
     PlayerFlagComponent _flagComponent;
 
-    public event Action OnRespawn;
-    
+    public event Action OnSpawn;
 
     void Awake()
     {
@@ -34,16 +33,10 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     void SubscribeEvents()
     {
-        _player.OnPlayerCreated += () => Timing.RunCoroutine(_HandleRespawn());
+        _player.OnPlayerCreated  += () => Timing.RunCoroutine(_HandleRespawn());
         _healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
 
-        // Despawning and Spawning
         _healthComponent.OnDeath += Despawn;
-        OnRespawn += Spawn;
-
-        // Death state
-        _healthComponent.OnDeath += () => _flagComponent.SetFlag(EFlag.Dead, true);
-        OnRespawn += () => _flagComponent.SetFlag(EFlag.Dead, false);
     }
 
 
@@ -55,7 +48,6 @@ public class PlayerRespawnComponent : MonoBehaviour
     IEnumerator<float> _HandleRespawn()
     {
         yield return Timing.WaitForSeconds(_respawnTime);
-        OnRespawn?.Invoke();
     }
 
     void Despawn()
@@ -69,6 +61,8 @@ public class PlayerRespawnComponent : MonoBehaviour
         transform.position = GetRandomSpawnPosition();
         _healthComponent.enabled = true;
         _graphicsGO.SetActive(true);
+
+        OnSpawn?.Invoke();
     }
 
     Vector3 GetRandomSpawnPosition()

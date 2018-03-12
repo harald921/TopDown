@@ -17,10 +17,11 @@ public class PlayerMovementComponent : Photon.MonoBehaviour
 
     float _currentRotationVelocity;
 
+    MovementSlower _movementSlower;
+
     Player _player;
     PlayerInputComponent _inputComponent;
     PlayerFlagComponent _flagComponent;
-    MovementSlower _movementSlower;
 
     public void ManualAwake()
     {
@@ -48,13 +49,23 @@ public class PlayerMovementComponent : Photon.MonoBehaviour
 
     void HandleRotation()
     {
-        float targetAngle = CalculateTargetRotation().eulerAngles.y;
+        // Get the current and target angles
+        float   targetAngle   = CalculateTargetRotation().eulerAngles.y;
+        Vector3 currentAngles = _rotationTransform.eulerAngles;
 
-        Vector3 eulerAngles = _rotationTransform.eulerAngles;
+        // SmoothDamp a value towards the target
+        float   smoothAngle   = Mathf.SmoothDampAngle(currentAngles.y, targetAngle, ref _currentRotationVelocity, _rotationTime);
 
-        eulerAngles.y = Mathf.SmoothDampAngle(eulerAngles.y, targetAngle, ref _currentRotationVelocity, _rotationTime);
+        // Apply it to the Y axis
+        Vector3 targetAngles = new Vector3()
+        {
+            x = currentAngles.x,
+            y = smoothAngle,
+            z = currentAngles.z
+        };
 
-        _rotationTransform.rotation = Quaternion.Euler(eulerAngles);
+        // Set the rotation
+        _rotationTransform.rotation = Quaternion.Euler(targetAngles);
     }
      
     void HandleMovement()
@@ -84,11 +95,11 @@ public class PlayerMovementComponent : Photon.MonoBehaviour
 
         public MovementSlower(Player inPlayer, float inMovementSlowFactor, float inFalloffExponent, float inFalloffSpeed)
         {
-            _player = inPlayer;
+            _player                = inPlayer;
 
             _maxMovementSlowFactor = inMovementSlowFactor;
-            _falloffExponent = inFalloffExponent;
-            _falloffSpeed = inFalloffSpeed;
+            _falloffExponent       = inFalloffExponent;
+            _falloffSpeed          = inFalloffSpeed;
 
             SubscribeEvents();
         }

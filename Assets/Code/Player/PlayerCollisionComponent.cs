@@ -32,11 +32,12 @@ public class PlayerCollisionComponent : MonoBehaviour
     {
         foreach (Collider hitCollider in hitColliders)
         {
+            // Skip the collider if the layermask doesn't contain its layer
             if (!_collidesWith.Contains(hitCollider.gameObject.layer))
                 continue;
 
             Vector3 correctionDir;
-            float correctionDist;
+            float   correctionDist;
 
             // Calculate and perform required movement to resolve collision
             if (Physics.ComputePenetration(_collider, transform.position, transform.rotation, hitCollider, hitCollider.transform.position, hitCollider.transform.rotation, out correctionDir, out correctionDist))

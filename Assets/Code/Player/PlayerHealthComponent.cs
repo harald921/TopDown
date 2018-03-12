@@ -26,7 +26,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             float previousHealth = _currentHealth;
             _currentHealth = value;
 
-            OnHealthChange?.Invoke(previousHealth, _currentHealth); 
+            OnHealthChange?.Invoke(previousHealth, _currentHealth);
         }
     }
 
@@ -46,18 +46,18 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     CoroutineHandle _healthRegenHandle;
     CoroutineHandle _shieldRegenHandle;
 
+    PlayerRespawnComponent _respawnComponent;
+
     public delegate void HealthChangeHandler(float inPreviousHealth, float inCurrentHealth);
     public event HealthChangeHandler OnHealthChange;
     public delegate void ShieldChangeHandler(float inPreviousShield, float inCurrentShield);
     public event ShieldChangeHandler OnShieldChange;
 
-    PlayerRespawnComponent _respawnComponent;
-
     public event Action OnHealthDamage;
     public event Action OnShieldDamage;
     public event Action OnShieldBreak;
     public event Action OnDeath;
-    
+
 
     void Awake()
     {
@@ -87,7 +87,6 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             if (inPreviousHealth > inCurrentHealth)
                 OnHealthDamage?.Invoke();
         };
-
         OnShieldChange += (float inPreviousShield, float inCurrentShield) => {
             if (inPreviousShield > inCurrentShield)
                 OnShieldDamage?.Invoke();
@@ -107,7 +106,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             Timing.KillCoroutines(_healthRegenHandle);
         };
 
-        _respawnComponent.OnRespawn += RefreshHealthAndShield;
+        _respawnComponent.OnSpawn += RefreshHealthAndShield;
     }
 
     [PunRPC]

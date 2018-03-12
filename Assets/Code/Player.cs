@@ -16,6 +16,7 @@ public class Player : Photon.MonoBehaviour
     public PlayerTeamComponent      teamComponent       { get; private set; }
     public PlayerWeaponComponent    weaponComponent     { get; private set; }
     public PlayerFlagComponent      flagComponent       { get; private set; }
+    public PlayerRespawnComponent   respawnComponent    { get; private set; }
 
     public event Action OnPlayerCreated;
 
@@ -28,9 +29,11 @@ public class Player : Photon.MonoBehaviour
         teamComponent      = GetComponent<PlayerTeamComponent>();
         weaponComponent    = GetComponent<PlayerWeaponComponent>();
         flagComponent      = GetComponent<PlayerFlagComponent>();
+        respawnComponent   = GetComponent<PlayerRespawnComponent>();
 
         movementComponent.ManualAwake();
         weaponComponent.ManualAwake();
+        flagComponent.ManualAwake();
 
         if (!photonView.isMine)
             return;

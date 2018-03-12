@@ -10,15 +10,23 @@ public class PlayerFlagComponent : Photon.MonoBehaviour
     Dictionary<EFlag, CoroutineHandle> _flagHandles = new Dictionary<EFlag, CoroutineHandle>();
 
 
-    void Awake()
+    public void ManualAwake()
     {
         foreach (EFlag flag in Enum.GetValues(typeof(EFlag)))
         {
             _flags.Add(flag, false);
             _flagHandles.Add(flag, new CoroutineHandle());
         }
+
+        SubscribeEvents();
     }
 
+    void SubscribeEvents()
+    {
+        Player player = GetComponent<Player>();
+        player.healthComponent.OnDeath    += () => SetFlag(EFlag.Dead, true);
+        player.respawnComponent.OnSpawn += () => SetFlag(EFlag.Dead, false);
+    }
 
     // External
     public void SetFlag(EFlag inFlag, bool inState, float inDuration = 0.0f, bool inNetTransfer = false)
