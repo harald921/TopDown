@@ -47,6 +47,7 @@ public class PlayerRespawnComponent : MonoBehaviour
     IEnumerator<float> _HandleRespawn()
     {
         yield return Timing.WaitForSeconds(_respawnTime);
+        Spawn();
     }
 
     void Despawn()
