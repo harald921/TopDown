@@ -39,14 +39,16 @@ public class PlayerInputComponent : Photon.MonoBehaviour
 
     Vector3 GetAimTarget()
     {
-        Plane aimTargetPlane = new Plane(Vector3.up, Vector3.up); // Second parameter should be the height of the players weapon
+        // Create a plane at the heigh of the player's eyes
+        Plane aimTargetPlane = new Plane(Vector3.up, Vector3.up);
+
+        // Create a ray going through the camera at the mouseposition, and get the distance at which the ray contacts the plane
         Ray mouseThroughCameraRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
         float distanceToHit;
         aimTargetPlane.Raycast(mouseThroughCameraRay, out distanceToHit);
 
-        Vector3 aimTarget = mouseThroughCameraRay.GetPoint(distanceToHit);
-
-        return aimTarget;
+        // The point that is the distance along the ray is the aim target
+        return mouseThroughCameraRay.GetPoint(distanceToHit);
     }
 
     public struct SInput

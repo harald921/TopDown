@@ -27,7 +27,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         if (!photonView.isMine)
             return;
 
-        _player.healthComponent.OnDeath += () => { if (_heldWeapon) photonView.RPC("DropWeapon", PhotonTargets.All); };
+        _player.healthComponent.OnDeath += () => TryDropWeapon();
     }
 
     public void ManualUpdate()
@@ -39,24 +39,30 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     void HandleWeaponPickup()
     {
         if (_inputComponent.input.pickUpWeapon)
-        {
-            Weapon nearbyWeapon = GetClosestWeapon();
-            if (nearbyWeapon)
-            {
-                if (_heldWeapon)
-                    photonView.RPC("DropWeapon", PhotonTargets.All);
-
-                photonView.RPC("PickupWeapon", PhotonTargets.All, nearbyWeapon.photonView.viewID);
-            }
-        }
+            TryPickupWeapon();
 
         if (_inputComponent.input.dropWeapon)
-            if (_heldWeapon)
-                photonView.RPC("DropWeapon", PhotonTargets.All);
+            TryDropWeapon();
+    }
+
+    void TryPickupWeapon()
+    {
+        Weapon nearbyWeapon = GetClosestWeapon();
+        if (nearbyWeapon)
+        {
+            TryDropWeapon();
+            photonView.RPC("NetPickupWeapon", PhotonTargets.All, nearbyWeapon.photonView.viewID);
+        }
+    }
+
+    void TryDropWeapon()
+    {
+        if (_heldWeapon)
+            photonView.RPC("NetDropWeapon", PhotonTargets.All);
     }
 
     [PunRPC]
-    void PickupWeapon(int inViewID)
+    void NetPickupWeapon(int inViewID)
     {
         Weapon weaponToPickup = PhotonView.Find(inViewID).GetComponent<Weapon>();
         weaponToPickup.transform.SetParent(_handTransform);
@@ -71,7 +77,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    void DropWeapon()
+    void NetDropWeapon()
     {
         Rigidbody weaponRigidbody = _heldWeapon.GetComponent<Rigidbody>();
         weaponRigidbody.isKinematic = false;
