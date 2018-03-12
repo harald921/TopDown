@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class ShieldBar : MonoBehaviour
 {
     [SerializeField] Gradient _colorGradient;
-
-    [Header("References")]
     [SerializeField] Image _fill;
 
     float _maxShield;
@@ -15,16 +13,17 @@ public class ShieldBar : MonoBehaviour
 
     public void Initialize(PlayerHealthComponent inPlayerHealthComponent, float inMaxShield)
     {
-        inPlayerHealthComponent.OnShieldChange += UpdateBar;
         _maxShield = inMaxShield;
 
         foreach (Transform child in transform)
             child.gameObject.SetActive(true);
+
+        inPlayerHealthComponent.OnShieldChange += UpdateBar;
     }
 
-    void UpdateBar(float inPreviousShield, float inCurrentShield)
+    void UpdateBar(PlayerHealthComponent.ShieldChangeArgs inArgs)
     {
-        float shieldPercentage = (inCurrentShield / _maxShield);
+        float shieldPercentage = (inArgs.inCurrentShield / _maxShield);
         _fill.fillAmount = shieldPercentage;
         _fill.color = _colorGradient.Evaluate(shieldPercentage);
     }

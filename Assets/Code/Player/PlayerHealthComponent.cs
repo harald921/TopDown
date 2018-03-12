@@ -26,7 +26,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             float previousHealth = _currentHealth;
             _currentHealth = value;
 
-            OnHealthChange?.Invoke(previousHealth, _currentHealth);
+            OnHealthChange?.Invoke(new HealthChangeArgs() { inCurrentHealth = _currentHealth, inPreviousHealth = previousHealth });
         }
     }
 
@@ -39,7 +39,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
             float previousShield = _currentShield;
             _currentShield = value;
 
-            OnShieldChange?.Invoke(previousShield, _currentShield);
+            OnShieldChange?.Invoke(new ShieldChangeArgs() { inCurrentShield = _currentShield, inPreviousShield = previousShield });
         }
     }
 
@@ -48,10 +48,19 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
 
     PlayerRespawnComponent _respawnComponent;
 
-    public delegate void HealthChangeHandler(float inPreviousHealth, float inCurrentHealth);
-    public event HealthChangeHandler OnHealthChange;
-    public delegate void ShieldChangeHandler(float inPreviousShield, float inCurrentShield);
-    public event ShieldChangeHandler OnShieldChange;
+    public class HealthChangeArgs
+    {
+        public float inCurrentHealth;
+        public float inPreviousHealth;
+    }
+    public event Action<HealthChangeArgs> OnHealthChange;
+
+    public class ShieldChangeArgs
+    {
+        public float inCurrentShield;
+        public float inPreviousShield;
+    }
+    public event Action<ShieldChangeArgs> OnShieldChange;
 
     public event Action OnHealthDamage;
     public event Action OnShieldDamage;
@@ -77,18 +86,19 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
-            DealDamage(20);
+            DealDamage(5);
     }
 
     void SubscribeEvents()
     {
         // Calling of OnHealthDamage and OnShieldDamage
-        OnHealthChange += (float inPreviousHealth, float inCurrentHealth) => {
-            if (inPreviousHealth > inCurrentHealth)
+        OnHealthChange += args => {
+            if (args.inPreviousHealth > args.inCurrentHealth)
                 OnHealthDamage?.Invoke();
         };
-        OnShieldChange += (float inPreviousShield, float inCurrentShield) => {
-            if (inPreviousShield > inCurrentShield)
+
+        OnShieldChange += args => {
+            if (args.inPreviousShield > args.inCurrentShield)
                 OnShieldDamage?.Invoke();
         };
 
@@ -139,10 +149,7 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
         // Health damage if player is alive
         if (_currentHealth > 0)
         {
-            float previousHealth = _currentHealth;
-            _currentHealth -= remainingDamage;
-
-            OnHealthChange(previousHealth, _currentHealth);
+            currentHealth -= remainingDamage;
 
             if (_currentHealth <= 0)
                 OnDeath?.Invoke();
@@ -159,33 +166,27 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     {
         yield return Timing.WaitForSeconds(_healthRegenDelay);
 
+        currentHealth = 0;
         while (_currentHealth < _maxHealth)
         {
-            float previousHealth = _currentHealth;
-            _currentHealth += _healthRegenRate * Time.deltaTime;
-
-            OnHealthChange?.Invoke(previousHealth, _currentHealth);
-
+            currentHealth += _healthRegenRate * Time.deltaTime;
             yield return Timing.WaitForOneFrame;
         }
 
-        _currentHealth = _maxHealth;
+        currentHealth = _maxHealth;
     }
 
     IEnumerator<float> _HandleShieldRegen()
     {
         yield return Timing.WaitForSeconds(_shieldRegenDelay);
 
+        currentShield = 0;
         while (_currentShield < _maxShield)
         {
-            float previousShield = _currentShield;
-            _currentShield += _shieldRegenRate * Time.deltaTime;
-
-            OnShieldChange?.Invoke(previousShield, _currentShield);
-
+            currentShield += _shieldRegenRate * Time.deltaTime;
             yield return Timing.WaitForOneFrame;
         }
 
-        _currentShield = _maxShield;
+        currentShield = _maxShield;
     }
 }

@@ -12,7 +12,7 @@ public class CameraBloodEffect : MonoBehaviour
     [SerializeField] [Range(0, 1)] float _distortion     = 0.2f;
 
     float _playerMaxHealth;
-    float  _trauma;        
+    float _trauma;        
 	
 	Material _material;
 
@@ -26,7 +26,7 @@ public class CameraBloodEffect : MonoBehaviour
 
         _material = new Material(_shader);
         _material.SetTexture("_BlendTex", _image);
-        _material.SetTexture("_BumpMap", _normals);
+        _material.SetTexture("_BumpMap",  _normals);
     }
 
     public void Initialize(PlayerHealthComponent inHealthComponent, float inMaxHealth)
@@ -35,9 +35,9 @@ public class CameraBloodEffect : MonoBehaviour
         inHealthComponent.OnHealthChange += SetTraumaRelativeToHealth;
     }
 
-    void SetTraumaRelativeToHealth(float inPreviousHealth, float inCurrentHealth)
+    void SetTraumaRelativeToHealth(PlayerHealthComponent.HealthChangeArgs inArgs)
     {
-        float healthPercentage = inCurrentHealth / _playerMaxHealth;
+        float healthPercentage = inArgs.inCurrentHealth / _playerMaxHealth;
         _trauma = Mathf.Lerp(_maxBloodAmount, 0, healthPercentage);
     }
 

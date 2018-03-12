@@ -14,15 +14,14 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     Player _player;
     PlayerHealthComponent _healthComponent;
-    PlayerFlagComponent _flagComponent;
 
     public event Action OnSpawn;
+
 
     void Awake()
     {
         _player = GetComponent<Player>();
         _healthComponent = GetComponent<PlayerHealthComponent>();
-        _flagComponent = GetComponent<PlayerFlagComponent>();
 
         _graphicsGO = GetComponent<Player>().graphicsGO;
 
