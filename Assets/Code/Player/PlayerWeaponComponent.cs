@@ -16,7 +16,9 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     PlayerInputComponent     _inputComponent;
 
     public event Action OnWeaponFire;
-
+    public event Action OnWeaponReload;
+    public event Action OnWeaponPickedUp;
+    public event Action OnWeaponDropped;
 
     public void ManualAwake()
     {
