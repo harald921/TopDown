@@ -6,43 +6,33 @@ using MEC;
 
 public class PlayerRespawnComponent : MonoBehaviour
 {
-    [SerializeField] Transform _spawnLocationsParent;
     [SerializeField] float _respawnTime = 3.0f;
 
-    GameObject _graphicsGO;
-    SpawnLocation[] _spawnLocations;
-
-    Player _player;
-    PlayerHealthComponent _healthComponent;
+    Player            _player;
+    SpawnPointManager _spawnPointManager;
+    GameObject        _graphicsGO;
 
     public event Action OnSpawn;
 
 
-    void Awake()
+    public void ManualAwake()
     {
-        _player = GetComponent<Player>();
-        _healthComponent = GetComponent<PlayerHealthComponent>();
+        _player            = GetComponent<Player>();
+        _graphicsGO        = _player.graphicsGO;
+        _spawnPointManager = FindObjectOfType<SpawnPointManager>();
 
-        _graphicsGO = GetComponent<Player>().graphicsGO;
-
-        _spawnLocations = GetAllSpawnLocations();
 
         SubscribeEvents();
     }
 
     void SubscribeEvents()
     {
-        _player.OnPlayerCreated  += () => Timing.RunCoroutine(_HandleRespawn());
-        _healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
+        _player.OnPlayerCreated         += () => Timing.RunCoroutine(_HandleRespawn());
+        _player.healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
 
-        _healthComponent.OnDeath += Despawn;
+        _player.healthComponent.OnDeath += Despawn;
     }
 
-
-    SpawnLocation[] GetAllSpawnLocations()
-    {
-        return GameObject.Find("SpawnLocations").GetComponentsInChildren<SpawnLocation>();
-    }
 
     IEnumerator<float> _HandleRespawn()
     {
@@ -50,25 +40,18 @@ public class PlayerRespawnComponent : MonoBehaviour
         Spawn();
     }
 
-    void Despawn()
-    {
-        _healthComponent.enabled = false;
-        _graphicsGO.SetActive(false);
-    }
-
     void Spawn()
     {
-        transform.position = GetRandomSpawnPosition();
-        _healthComponent.enabled = true;
+        transform.position = _spawnPointManager.GetRandomSpawnPoint(_player.teamComponent.team);
+        _player.healthComponent.enabled = true;
         _graphicsGO.SetActive(true);
 
         OnSpawn?.Invoke();
     }
 
-    Vector3 GetRandomSpawnPosition()
+    void Despawn()
     {
-        SpawnLocation spawnLocation = _spawnLocations[UnityEngine.Random.Range(0, _spawnLocations.Length)];
-
-        return new Vector3(spawnLocation.transform.position.x, 1, spawnLocation.transform.position.z);
+        _player.healthComponent.enabled = false;
+        _graphicsGO.SetActive(false);
     }
 }

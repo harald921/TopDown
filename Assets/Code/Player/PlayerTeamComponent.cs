@@ -6,4 +6,9 @@ public class PlayerTeamComponent : MonoBehaviour
 {
     [SerializeField] int _team = 0;
     public int team => _team;
+
+    public void SetTeam(int inTeam)
+    {
+        _team = inTeam;
+    }
 }

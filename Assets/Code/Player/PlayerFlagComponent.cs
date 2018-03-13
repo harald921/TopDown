@@ -24,7 +24,7 @@ public class PlayerFlagComponent : Photon.MonoBehaviour
     void SubscribeEvents()
     {
         Player player = GetComponent<Player>();
-        player.healthComponent.OnDeath    += () => SetFlag(EFlag.Dead, true);
+        player.healthComponent.OnDeath  += () => SetFlag(EFlag.Dead, true);
         player.respawnComponent.OnSpawn += () => SetFlag(EFlag.Dead, false);
     }
 
