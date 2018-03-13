@@ -34,6 +34,14 @@ public class SpawnPointManager : MonoBehaviour
 
         List<SpawnPoint> spawnPoints = _spawnPoints[inTeam];
         int randomIndex = Random.Range(0, _spawnPoints.Count);
-        return spawnPoints[randomIndex].transform.position;
+
+        Vector3 spawnPoint = spawnPoints[randomIndex].transform.position;
+
+        return new Vector3()
+        {
+            x = spawnPoint.x,
+            y = 1,
+            z = spawnPoint.z
+        };
     }
 }

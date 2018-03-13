@@ -6,63 +6,88 @@ using MEC;
 
 public class AmmoCounterUI : MonoBehaviour
 {
-    [SerializeField] Text _text;
-    [SerializeField] Image _reloadFill;
+    [SerializeField] TMPro.TextMeshProUGUI _text;
+    [SerializeField] Image _reloadProgressBar;
 
     CoroutineHandle _reloadAnimationHandle;
 
-    Player _player;
+    PlayerWeaponComponent _weaponComponent;
 
-    public void Initialize(Player inPlayer)
+    public void Initialize(PlayerWeaponComponent inWeaponComponent)
     {
-        _player = inPlayer;
+        _weaponComponent = inWeaponComponent;
 
-        _player.weaponComponent.OnWeaponFire     += UpdateCurrentAmmo;
-        _player.weaponComponent.OnWeaponDropped  += () => OnWeaponDropped();
-        _player.weaponComponent.OnWeaponPickedUp += () => OnWeaponPickedUp(_player.weaponComponent.heldWeapon);
+        if (_weaponComponent.heldWeapon)
+            UpdateText();
+        else
+            Hide();
+
+        StopAndHideReloadAnimation();
+
+        SubscribeEvents();
     }
 
-    void UpdateCurrentAmmo()
+    void SubscribeEvents()
     {
+        _weaponComponent.OnWeaponFire         += UpdateText;
 
+        _weaponComponent.OnWeaponDropped      += Hide;
+        _weaponComponent.OnWeaponPickedUp     += Show;
+
+        _weaponComponent.OnWeaponReloadStart  += RunReloadAnimation;
+        _weaponComponent.OnWeaponReloadFinish += UpdateText;
+    }
+
+    void RunReloadAnimation()
+    {
+        _reloadAnimationHandle = Timing.RunCoroutine(_HandleReloadAnimation());
     }
 
     IEnumerator<float> _HandleReloadAnimation()
     {
-        float reloadTime = _player.weaponComponent.heldWeapon.stats.reloadTime;
+        float reloadTime = _weaponComponent.heldWeapon.stats.reloadTime;
+
         float timer = 0;
         while (timer < reloadTime)
         {
             // Progress the reload animation bar fill
             float progress = Mathf.InverseLerp(0, reloadTime, timer);
-            _reloadFill.fillAmount = progress;
+
+            _reloadProgressBar.fillAmount = progress;
 
             timer += Time.deltaTime;
             yield return Timing.WaitForOneFrame;
         }
-
-        _reloadFill.fillAmount = 0;
     }
 
-    void StopAndHideReloadAnimation()
-    {
-        Timing.KillCoroutines(_reloadAnimationHandle);
-        _reloadFill.fillAmount = 0;
-    }
-
-    void OnWeaponDropped()
+    void Hide()
     {
         StopAndHideReloadAnimation();
         gameObject.SetActive(false);
     }
 
-    void OnWeaponPickedUp(Weapon inWeapon)
+    void Show()
     {
-        Debug.Log("TODO: Add UpdateUIText() here");
+        gameObject.SetActive(true);
+        UpdateText();
     }
 
-    void UpdateUIText(string inWeaponName, int inCurrentAmmo, int inMaxAmmo)
+    void StopAndHideReloadAnimation()
     {
-        _text.text = inWeaponName + ": " + inCurrentAmmo + " | " + inMaxAmmo;
+        Timing.KillCoroutines(_reloadAnimationHandle);
+        _reloadProgressBar.fillAmount = 0;
+    }
+
+    void UpdateText()
+    {
+        Weapon heldWeapon = _weaponComponent.heldWeapon;
+
+        string weaponName  = heldWeapon.stats.name;
+        int    currentAmmo = heldWeapon.currentAmmo;
+        int    maxAmmo     = heldWeapon.stats.maxAmmo;
+
+        _text.text = weaponName + ": " + currentAmmo + " | " + maxAmmo;
+
+        _reloadProgressBar.fillAmount = (float)currentAmmo / (float)maxAmmo;
     }
 }

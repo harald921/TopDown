@@ -10,8 +10,6 @@ public class HitscanMagazineWeapon : Weapon
     [SerializeField] SpecificStats _specificStats;
     [SerializeField] bool          _semiAuto;
 
-    int _currentAmmo;
-
     CoroutineHandle _fireHandle;
     CoroutineHandle _reloadHandle;
 
@@ -63,6 +61,7 @@ public class HitscanMagazineWeapon : Weapon
 
     IEnumerator<float> _HandleReload()
     {
+        TryInvokeReloadStart();
         yield return Timing.WaitForSeconds(stats.reloadTime);
         Reload();
     }
@@ -71,6 +70,7 @@ public class HitscanMagazineWeapon : Weapon
     void Reload()
     {
         _currentAmmo = stats.maxAmmo;
+        TryInvokeReloadFinish();
     }
 
     void Fire()
@@ -86,9 +86,9 @@ public class HitscanMagazineWeapon : Weapon
 
         hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, stats.damage, _type);
 
-        TryInvokeOnFire();
-
         _currentAmmo--;
+
+        TryInvokeOnFire();
     }
 
     Collider HitScan(out List<Vector3> outHitPoints)

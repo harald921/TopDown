@@ -16,9 +16,10 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     PlayerInputComponent     _inputComponent;
 
     public event Action OnWeaponFire;
-    public event Action OnWeaponReload;
     public event Action OnWeaponPickedUp;
     public event Action OnWeaponDropped;
+    public event Action OnWeaponReloadStart;
+    public event Action OnWeaponReloadFinish;
 
     public void ManualAwake()
     {
@@ -30,6 +31,8 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
             return;
 
         _player.healthComponent.OnDeath += () => TryDropWeapon();
+
+        FindObjectOfType<AmmoCounterUI>().Initialize(this);
     }
 
     public void ManualUpdate()
@@ -75,7 +78,13 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
 
         _heldWeapon = weaponToPickup;
         _heldWeapon.PickUp(_inputComponent);
-        _heldWeapon.OnFire += OnWeaponFire;
+
+        // Subscribe events
+        _heldWeapon.OnFire         += OnWeaponFire;
+        _heldWeapon.OnReloadStart  += OnWeaponReloadStart;
+        _heldWeapon.OnReloadFinish += OnWeaponReloadFinish;
+
+        OnWeaponPickedUp?.Invoke();
     }
 
     [PunRPC]
@@ -85,10 +94,16 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         weaponRigidbody.isKinematic = false;
         weaponRigidbody.AddTorque(_heldWeapon.transform.forward * 4.0f);
 
-        _heldWeapon.OnFire -= OnWeaponFire;
         _heldWeapon.Drop();
         _heldWeapon.transform.SetParent(null);
         _heldWeapon = null;
+
+        // Unsubscribe events
+        _heldWeapon.OnFire         -= OnWeaponFire;
+        _heldWeapon.OnReloadStart  -= OnWeaponReloadStart;
+        _heldWeapon.OnReloadFinish -= OnWeaponReloadFinish;
+
+        OnWeaponDropped?.Invoke();
     }
 
     Weapon GetClosestWeapon()

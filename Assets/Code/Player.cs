@@ -49,14 +49,14 @@ public class Player : Photon.MonoBehaviour
     
     void SetPlayerComponentFields()
     {
-        movementComponent = GetComponent<PlayerMovementComponent>();
+        movementComponent  = GetComponent<PlayerMovementComponent>();
         collisionComponent = GetComponent<PlayerCollisionComponent>();
-        healthComponent = GetComponent<PlayerHealthComponent>();
-        inputComponent = GetComponent<PlayerInputComponent>();
-        teamComponent = GetComponent<PlayerTeamComponent>();
-        weaponComponent = GetComponent<PlayerWeaponComponent>();
-        flagComponent = GetComponent<PlayerFlagComponent>();
-        respawnComponent = GetComponent<PlayerRespawnComponent>();
+        healthComponent    = GetComponent<PlayerHealthComponent>();
+        inputComponent     = GetComponent<PlayerInputComponent>();
+        teamComponent      = GetComponent<PlayerTeamComponent>();
+        weaponComponent    = GetComponent<PlayerWeaponComponent>();
+        flagComponent      = GetComponent<PlayerFlagComponent>();
+        respawnComponent   = GetComponent<PlayerRespawnComponent>();
     }
 
     void InvokeManualAwakes()
@@ -74,5 +74,4 @@ public class Player : Photon.MonoBehaviour
         collisionComponent.ManualUpdate();
         weaponComponent.ManualUpdate();
     }
-    
 }

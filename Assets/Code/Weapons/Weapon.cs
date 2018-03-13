@@ -10,9 +10,14 @@ public abstract class Weapon : Photon.MonoBehaviour
     [SerializeField] Stats _stats;
     public Stats stats => _stats;
 
+    protected int _currentAmmo;
+    public int currentAmmo => _currentAmmo;
+
     protected PlayerInputComponent _inputComponent;
 
     public event Action OnFire;
+    public event Action OnReloadStart;
+    public event Action OnReloadFinish;
 
     public abstract void PickUp(PlayerInputComponent inInputComponent);
     public abstract void Drop();
@@ -21,7 +26,14 @@ public abstract class Weapon : Photon.MonoBehaviour
     {
         OnFire?.Invoke();
     }
-
+    protected void TryInvokeReloadStart()
+    {
+        OnReloadStart?.Invoke();
+    }
+    protected void TryInvokeReloadFinish()
+    {
+        OnReloadFinish?.Invoke();
+    }
 
     public enum Type
     {
@@ -34,8 +46,10 @@ public abstract class Weapon : Photon.MonoBehaviour
     [Serializable]
     public struct Stats
     {
+        public string name;
+
         [Space(5)]
-        public int damage;
+        public int   damage;
         public float fireTime;
         public float spread;
 
@@ -43,7 +57,7 @@ public abstract class Weapon : Photon.MonoBehaviour
         public float recoilMoveSlow;
 
         [Space(5)]
-        public int maxAmmo;
+        public int   maxAmmo;
         public float reloadTime;
     }
 }
