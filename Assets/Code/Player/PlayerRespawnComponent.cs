@@ -13,6 +13,7 @@ public class PlayerRespawnComponent : MonoBehaviour
     GameObject        _graphicsGO;
 
     public event Action OnSpawn;
+    public event Action OnDespawn;
 
 
     public void ManualAwake()
@@ -53,5 +54,7 @@ public class PlayerRespawnComponent : MonoBehaviour
     {
         _player.healthComponent.enabled = false;
         _graphicsGO.SetActive(false);
+
+        OnDespawn?.Invoke();
     }
 }
