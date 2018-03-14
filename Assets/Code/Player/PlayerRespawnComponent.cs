@@ -28,15 +28,15 @@ public class PlayerRespawnComponent : MonoBehaviour
 
     void SubscribeEvents()
     {
-        _player.OnPlayerCreated         += () => Timing.RunCoroutine(_HandleRespawn());
-        _player.healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
+        _player.OnPlayerCreated         += Spawn;
 
-        _player.healthComponent.OnDeath += Despawn;
+        _player.healthComponent.OnDeath += () => Timing.RunCoroutine(_HandleRespawn());
     }
 
 
     IEnumerator<float> _HandleRespawn()
     {
+        Despawn();
         yield return Timing.WaitForSeconds(_respawnTime);
         Spawn();
     }
