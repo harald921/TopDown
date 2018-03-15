@@ -29,8 +29,12 @@ public class AssaultRifle : Weapon
 
         if (_inputComponent.input.weaponTriggerPulled)
         {
-            if (_currentAmmo > 0 && !_reloadHandle.IsRunning)
-                _fireHandle = Timing.RunCoroutineSingleton(_HandleFire(), _fireHandle, SingletonBehavior.Abort);
+            if (_currentAmmo > 0)
+            {
+                if (!_reloadHandle.IsRunning)
+                    _fireHandle = Timing.RunCoroutineSingleton(_HandleFire(), _fireHandle, SingletonBehavior.Abort);
+            }
+
             else
                 _reloadHandle = Timing.RunCoroutineSingleton(_HandleReload(), _reloadHandle, SingletonBehavior.Abort);
         }

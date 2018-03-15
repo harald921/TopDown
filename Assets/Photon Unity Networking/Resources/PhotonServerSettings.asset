@@ -55,4 +55,5 @@ MonoBehaviour:
   - _NetInitialize
   - NetDropWeapon
   - NetPickupWeapon
+  - SetVelocity
   DisableAutoOpenWizard: 1

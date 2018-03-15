@@ -166,10 +166,12 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     {
         yield return Timing.WaitForSeconds(_healthRegenDelay);
 
-        currentHealth = 0;
+        if (_currentHealth < 0)
+            currentHealth = 0;
+
         while (_currentHealth < _maxHealth)
         {
-            currentHealth += _healthRegenRate * Time.deltaTime;
+            currentHealth = Mathf.Clamp(_healthRegenRate * Time.deltaTime, 0, _maxHealth);
             yield return Timing.WaitForOneFrame;
         }
 
@@ -180,10 +182,12 @@ public class PlayerHealthComponent : Photon.MonoBehaviour
     {
         yield return Timing.WaitForSeconds(_shieldRegenDelay);
 
-        currentShield = 0;
+        if (_currentHealth < 0)
+            currentShield = 0;
+
         while (_currentShield < _maxShield)
         {
-            currentShield += _shieldRegenRate * Time.deltaTime;
+            currentShield = Mathf.Clamp(_currentShield + _shieldRegenRate * Time.deltaTime, 0, _maxShield);
             yield return Timing.WaitForOneFrame;
         }
 

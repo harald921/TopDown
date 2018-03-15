@@ -70,11 +70,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4743142080276566}
-  - component: {fileID: 114762687096403258}
   - component: {fileID: 114093916575402936}
   - component: {fileID: 54941043165848292}
   - component: {fileID: 65003103590894330}
   - component: {fileID: 33249700412826622}
+  - component: {fileID: 114374263869586262}
   m_Layer: 12
   m_Name: PlasmaRifle
   m_TagString: Untagged
@@ -117,7 +117,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1400414977223236}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6327939, y: 1.34, z: 3.9097185}
+  m_LocalPosition: {x: -72.21442, y: 0.618, z: 50.76516}
   m_LocalScale: {x: 3, y: 3.2, z: 3}
   m_Children:
   - {fileID: 4819141803248516}
@@ -134,7 +134,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1762757090919684}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0236, z: 0.294}
+  m_LocalPosition: {x: 0, y: 0.0218, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4743142080276566}
@@ -349,7 +349,7 @@ MonoBehaviour:
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
---- !u!114 &114762687096403258
+--- !u!114 &114374263869586262
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -357,19 +357,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1400414977223236}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c616940fd5ef6b4181af59250ab97bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 26482e9c33d97b947aa70b9016227790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _firingMechanism: 0
+  _type: 2
+  _muzzleTransform: {fileID: 4819141803248516}
+  _stats:
+    name: Pulse Rifle
+    damage: 6
+    fireTime: 0.15
+    spread: 0.06
+    recoilMoveSlow: 0.05
+    maxAmmo: 20
+    reloadTime: 3
   _projectilePrefab: {fileID: 1932406060625188, guid: fdcddf579cbd7ab4580f45d2fab4458f,
     type: 2}
-  _stats:
-    damage: 5
-    fireTime: 0.12
-    projectilesPerShot: 1
-    projectileLifeTime: 3
-    spread: 0.03
-    velocity: 120
-    velocityInconsistency: 0.05
-    maxAmmo: 20
-    reloadTime: 2
+  _specificStats:
+    projectileSpeed: 110

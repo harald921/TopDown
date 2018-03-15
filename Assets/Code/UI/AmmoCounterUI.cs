@@ -58,8 +58,6 @@ public class AmmoCounterUI : MonoBehaviour
 
             _reloadProgressBar.fillAmount = progress;
 
-            Debug.Log("Rawwr! *coroutining*");
-
             timer += Time.deltaTime;
             yield return Timing.WaitForOneFrame;
         }
@@ -79,8 +77,7 @@ public class AmmoCounterUI : MonoBehaviour
 
     void StopAndHideReloadAnimation()
     {
-        Debug.Log("kiiill!");
-        Debug.Log("Killing: " + Timing.KillCoroutines(_reloadAnimationHandle));
+        Timing.KillCoroutines(_reloadAnimationHandle);
         _reloadProgressBar.fillAmount = 0;
     }
 
