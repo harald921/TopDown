@@ -29,13 +29,16 @@ public class AmmoCounterUI : MonoBehaviour
 
     void SubscribeEvents()
     {
-        _weaponComponent.OnWeaponFire         += UpdateText;
+        _weaponComponent.OnWeaponPickedUp += (Weapon inPickedUpWeapon) => 
+        {
+            inPickedUpWeapon.OnFire         += UpdateText;
+            inPickedUpWeapon.OnReloadStart  += RunReloadAnimation;
+            inPickedUpWeapon.OnReloadFinish += UpdateText;
 
-        _weaponComponent.OnWeaponDropped      += Hide;
-        _weaponComponent.OnWeaponPickedUp     += Show;
+            Show();
+        };
 
-        _weaponComponent.OnWeaponReloadStart  += RunReloadAnimation;
-        _weaponComponent.OnWeaponReloadFinish += UpdateText;
+        _weaponComponent.OnWeaponDropped += (Weapon inDroppedWeapon) => Hide();
     }
 
     void RunReloadAnimation()
@@ -54,6 +57,8 @@ public class AmmoCounterUI : MonoBehaviour
             float progress = Mathf.InverseLerp(0, reloadTime, timer);
 
             _reloadProgressBar.fillAmount = progress;
+
+            Debug.Log("Rawwr! *coroutining*");
 
             timer += Time.deltaTime;
             yield return Timing.WaitForOneFrame;
@@ -74,7 +79,8 @@ public class AmmoCounterUI : MonoBehaviour
 
     void StopAndHideReloadAnimation()
     {
-        Timing.KillCoroutines(_reloadAnimationHandle);
+        Debug.Log("kiiill!");
+        Debug.Log("Killing: " + Timing.KillCoroutines(_reloadAnimationHandle));
         _reloadProgressBar.fillAmount = 0;
     }
 

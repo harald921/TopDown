@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using MEC;
 
-public class HitscanMagazineWeapon : Weapon
+// Hitscan
+// Magazine 
+
+public class AssaultRifle : Weapon
 {
     [SerializeField] GameObject    _tracerPrefab;
     [SerializeField] LayerMask     _collidesWith;
@@ -37,15 +40,11 @@ public class HitscanMagazineWeapon : Weapon
     }
 
 
-    public override void PickUp(PlayerInputComponent inInputComponent)
-    {
-        _inputComponent = inInputComponent;
-    }
-
     public override void Drop()
     {
         Timing.KillCoroutines(_reloadHandle);
-        _inputComponent = null;
+
+        base.Drop();
     }
 
 

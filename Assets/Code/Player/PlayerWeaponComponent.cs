@@ -15,11 +15,8 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
     PlayerCollisionComponent _collisionComponent;
     PlayerInputComponent     _inputComponent;
 
-    public event Action OnWeaponFire;
-    public event Action OnWeaponPickedUp;
-    public event Action OnWeaponDropped;
-    public event Action OnWeaponReloadStart;
-    public event Action OnWeaponReloadFinish;
+    public event Action<Weapon> OnWeaponPickedUp;
+    public event Action<Weapon> OnWeaponDropped;
 
     public void ManualAwake()
     {
@@ -79,12 +76,7 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
         _heldWeapon = weaponToPickup;
         _heldWeapon.PickUp(_inputComponent);
 
-        // Subscribe events
-        _heldWeapon.OnFire         += OnWeaponFire;
-        _heldWeapon.OnReloadStart  += OnWeaponReloadStart;
-        _heldWeapon.OnReloadFinish += OnWeaponReloadFinish;
-
-        OnWeaponPickedUp?.Invoke();
+        OnWeaponPickedUp?.Invoke(_heldWeapon);
     }
 
     [PunRPC]
@@ -96,14 +88,10 @@ public class PlayerWeaponComponent : Photon.MonoBehaviour
 
         _heldWeapon.Drop();
         _heldWeapon.transform.SetParent(null);
+
+        OnWeaponDropped?.Invoke(_heldWeapon);
+
         _heldWeapon = null;
-
-        // Unsubscribe events
-        _heldWeapon.OnFire         -= OnWeaponFire;
-        _heldWeapon.OnReloadStart  -= OnWeaponReloadStart;
-        _heldWeapon.OnReloadFinish -= OnWeaponReloadFinish;
-
-        OnWeaponDropped?.Invoke();
     }
 
     Weapon GetClosestWeapon()

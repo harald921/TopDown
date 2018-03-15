@@ -19,8 +19,20 @@ public abstract class Weapon : Photon.MonoBehaviour
     public event Action OnReloadStart;
     public event Action OnReloadFinish;
 
-    public abstract void PickUp(PlayerInputComponent inInputComponent);
-    public abstract void Drop();
+
+    public virtual void PickUp(PlayerInputComponent inInputComponent)
+    {
+        _inputComponent = inInputComponent;
+    }
+
+    public virtual void Drop()
+    {
+        _inputComponent = null;
+
+        OnFire         = null;
+        OnReloadStart  = null;
+        OnReloadFinish = null;
+    }
 
     protected void TryInvokeOnFire()
     {
