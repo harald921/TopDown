@@ -8,10 +8,10 @@ using MEC;
 
 public class AssaultRifle : Weapon
 {
-    [SerializeField] GameObject    _tracerPrefab;
-    [SerializeField] LayerMask     _collidesWith;
-    [SerializeField] SpecificStats _specificStats;
-    [SerializeField] bool          _semiAuto;
+    [SerializeField] GameObject      _tracerPrefab;
+    [SerializeField] LayerMask       _collidesWith;
+    [SerializeField] ProjectileStats _projectileStats;
+    [SerializeField] bool            _semiAuto;
 
     CoroutineHandle _fireHandle;
     CoroutineHandle _reloadHandle;
@@ -87,7 +87,7 @@ public class AssaultRifle : Weapon
             SpawnTracer(hitPoints);
         }
 
-        hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, stats.damage, _type);
+        hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, _projectileStats.damage, _projectileStats._type);
 
         _currentAmmo--;
 
@@ -103,10 +103,10 @@ public class AssaultRifle : Weapon
         };
 
         RaycastHit hit;
-        if (Physics.Raycast(_muzzleTransform.position, projectileDirection, out hit, _specificStats.range, _collidesWith))
+        if (Physics.Raycast(_muzzleTransform.position, projectileDirection, out hit, _projectileStats.range, _collidesWith))
             outHitPoints.Add(hit.point);
         else
-            outHitPoints.Add(_muzzleTransform.position + (projectileDirection * _specificStats.range));
+            outHitPoints.Add(_muzzleTransform.position + (projectileDirection * _projectileStats.range));
 
         return hit.collider;
     }
@@ -138,8 +138,10 @@ public class AssaultRifle : Weapon
     }
    
     [System.Serializable]
-    public struct SpecificStats
+    public struct ProjectileStats
     {
+        public Type  _type;
+        public int   damage;
         public float range;
     }
 }

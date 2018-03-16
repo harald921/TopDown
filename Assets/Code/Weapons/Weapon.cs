@@ -5,7 +5,6 @@ using UnityEngine;
 
 public abstract class Weapon : Photon.MonoBehaviour
 {
-    [SerializeField] protected Type _type;
     [SerializeField] protected Transform _muzzleTransform;
     [SerializeField] Stats _stats;
     public Stats stats => _stats;
@@ -29,9 +28,9 @@ public abstract class Weapon : Photon.MonoBehaviour
     {
         _inputComponent = null;
 
-        OnFire         = null;
-        OnReloadStart  = null;
-        OnReloadFinish = null;
+        OnFire          = null;
+        OnReloadStart   = null;
+        OnReloadFinish  = null;
     }
 
     protected void TryInvokeOnFire()
@@ -61,7 +60,6 @@ public abstract class Weapon : Photon.MonoBehaviour
         public string name;
 
         [Space(5)]
-        public int   damage;
         public float fireTime;
         public float spread;
 

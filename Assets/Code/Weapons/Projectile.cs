@@ -40,7 +40,6 @@ public class Projectile : Photon.MonoBehaviour
         foreach (RaycastHit hit in hits)
             if (_collidesWith.Contains(hit.collider.gameObject.layer))
             {
-                Debug.Log(hit.collider.name);
                 hit.collider.GetComponent<Player>()?.healthComponent.photonView.RPC("DealDamage", PhotonTargets.All, _damage, _type);
                 Destroy(gameObject);
             }
