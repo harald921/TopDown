@@ -71,3 +71,29 @@ public abstract class Weapon : Photon.MonoBehaviour
         public float reloadTime;
     }
 }
+
+/* Component Based Weapon
+ * 
+ *  - class Weapon
+ *      * _muzzleTransform
+ *      * PullTrigger()
+ *      
+ *  - class AmmoComponent
+ *      - class ExternalMagazineAmmoComponent
+ *      - class InternalMagazineAmmoComponent
+ *      - class BatteryAmmoComponent       
+ * 
+ *  - class FireComponent
+ *      - class HitscanFireComponent
+ *      - class ProjectileFireComponent
+ *  
+ *  - class FlagComponent
+ *      * Allows the other components to add flags that components can check for
+ *  
+ *  - class OverHeatComponent
+ *      * Makes the weapon overheat if fired too often. 
+ *      
+ *  - class ChargeUpComponent
+ *      * Makes the weapon have to charge up before firing
+ *  
+ */
