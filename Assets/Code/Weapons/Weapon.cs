@@ -72,6 +72,7 @@ public abstract class Weapon : Photon.MonoBehaviour
     }
 }
 
+
 /* Component Based Weapon
  * 
  *  - class Weapon
