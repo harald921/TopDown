@@ -12,12 +12,13 @@ public class Projectile : Photon.MonoBehaviour
     [SerializeField] LayerMask   _collidesWith;
     
     Vector3 _velocity;
-    
-    
+    Vector3 _previousPosition;
+
+
     void Update()
     {
-        CheckAndHandleCollision();
         Move();
+        CheckAndHandleCollision();
         ProgressLifetime();
     }
     
@@ -30,12 +31,12 @@ public class Projectile : Photon.MonoBehaviour
 
     void CheckAndHandleCollision()
     {
+        Vector3 toPreviousPosition = transform.position - _previousPosition;
+
         RaycastHit[] hits = Physics.SphereCastAll(origin:      transform.position, 
                                                   radius:      _size,
-                                                  direction:   _velocity.normalized, 
-                                                  maxDistance: _velocity.magnitude * Time.deltaTime);
-    
-        Debug.Log("TODO: Rather than letting the projectile check where it will be, make it spherecast to its previous position");
+                                                  direction:   toPreviousPosition.normalized, 
+                                                  maxDistance: toPreviousPosition.magnitude);
     
         foreach (RaycastHit hit in hits)
             if (_collidesWith.Contains(hit.collider.gameObject.layer))
@@ -47,6 +48,7 @@ public class Projectile : Photon.MonoBehaviour
     
     void Move()
     {
+        _previousPosition = transform.position;
         transform.position += _velocity * Time.deltaTime;
     }
     
