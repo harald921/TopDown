@@ -5,13 +5,18 @@ using UnityEngine;
 
 public abstract class Weapon : Photon.MonoBehaviour
 {
+    [SerializeField] Stats _stats;
+    public Stats stats => _stats;
+     
     [SerializeField] protected Transform _muzzleTransform;
+    public Transform muzzleTransform => _muzzleTransform;
 
     public WeaponAmmoComponent ammoComponent { get; private set; }
     public WeaponFireComponent fireComponent { get; private set; }
     public WeaponFlagComponent flagComponent { get; private set; }
 
-    protected PlayerInputComponent _inputComponent;
+    PlayerInputComponent _inputComponent;
+    public PlayerInputComponent inputComponent => _inputComponent;
 
     public event Action OnDropped;
     public event Action OnPickedUp;
@@ -26,10 +31,20 @@ public abstract class Weapon : Photon.MonoBehaviour
         InvokeManualAwakes();
     }
 
+    void Update()
+    {
+        InvokeManualUpdates();
+    }
+
     void InvokeManualAwakes()
     {
         ammoComponent.ManualAwake();
         flagComponent.ManualAwake();
+    }
+
+    void InvokeManualUpdates()
+    {
+        fireComponent.ManualUpdate();
     }
 
     public void PickUp(PlayerInputComponent inInputComponent)
@@ -42,6 +57,20 @@ public abstract class Weapon : Photon.MonoBehaviour
     {
         _inputComponent = null;
         OnDropped?.Invoke();
+    }
+
+    [Serializable]
+    public struct Stats
+    {
+        public string name;
+    }
+
+    public enum Type
+    {
+        None,
+
+        Ballistic,
+        Plasma
     }
 }
 

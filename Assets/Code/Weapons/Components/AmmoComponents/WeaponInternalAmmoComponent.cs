@@ -22,6 +22,7 @@ public class WeaponInternalAmmoComponent : WeaponAmmoComponent
         _currentAmmo = _maxAmmo;
 
         _weapon.OnDropped += CancelReload;
+        _weapon.fireComponent.OnFire += () => _currentAmmo--;
 
         base.ManualAwake();
     }
@@ -40,7 +41,6 @@ public class WeaponInternalAmmoComponent : WeaponAmmoComponent
     IEnumerator<float> _HandleReload()
     {
         TryInvokeOnReloadStart();
-        _weapon.flagComponent.SetFlag(EFlag.Reloading, true);
 
         while (_currentAmmo < _maxAmmo)
         {
@@ -49,13 +49,13 @@ public class WeaponInternalAmmoComponent : WeaponAmmoComponent
         }
 
 
-        _weapon.flagComponent.SetFlag(EFlag.Reloading, false);
-        TryInvokeOnReloadFinish();
+
+        TryInvokeOnReloadStop();
     }
 
     void CancelReload()
     {
         Timing.KillCoroutines(_reloadHandle);
-        _weapon.flagComponent.SetFlag(EFlag.Reloading, false);
+        TryInvokeOnReloadStop();
     }
 }

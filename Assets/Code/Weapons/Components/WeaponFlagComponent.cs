@@ -6,13 +6,13 @@ using MEC;
 public class WeaponFlagComponent : Photon.MonoBehaviour
 {
     // Private
-    Dictionary<EFlag, bool> _flags = new Dictionary<EFlag, bool>();
-    Dictionary<EFlag, CoroutineHandle> _flagHandles = new Dictionary<EFlag, CoroutineHandle>();
+    Dictionary<EWeaponFlag, bool> _flags = new Dictionary<EWeaponFlag, bool>();
+    Dictionary<EWeaponFlag, CoroutineHandle> _flagHandles = new Dictionary<EWeaponFlag, CoroutineHandle>();
 
 
     public void ManualAwake()
     {
-        foreach (EFlag flag in Enum.GetValues(typeof(EFlag)))
+        foreach (EWeaponFlag flag in Enum.GetValues(typeof(EWeaponFlag)))
         {
             _flags.Add(flag, false);
             _flagHandles.Add(flag, new CoroutineHandle());
@@ -23,13 +23,14 @@ public class WeaponFlagComponent : Photon.MonoBehaviour
 
     void SubscribeEvents()
     {
-        Player player = GetComponent<Player>();
-        player.healthComponent.OnDeath += () => SetFlag(EFlag.Dead, true);
-        player.respawnComponent.OnSpawn += () => SetFlag(EFlag.Dead, false);
+        Weapon weapon = GetComponent<Weapon>();
+
+        weapon.ammoComponent.OnReloadStart += () => SetFlag(EWeaponFlag.Reloading, true);
+        weapon.ammoComponent.OnReloadStop  += () => SetFlag(EWeaponFlag.Reloading, false);
     }
 
     // External
-    public void SetFlag(EFlag inFlag, bool inState, float inDuration = 0.0f, bool inNetTransfer = false)
+    public void SetFlag(EWeaponFlag inFlag, bool inState, float inDuration = 0.0f, bool inNetTransfer = false)
     {
         if (inNetTransfer)
             photonView.RPC("NetSetFlag", PhotonTargets.All, inFlag, inState, inDuration);
@@ -37,7 +38,7 @@ public class WeaponFlagComponent : Photon.MonoBehaviour
             NetSetFlag(inFlag, inState, inDuration);
     }
 
-    public bool GetFlag(EFlag inFlag)
+    public bool GetFlag(EWeaponFlag inFlag)
     {
         return _flags[inFlag];
     }
@@ -45,7 +46,7 @@ public class WeaponFlagComponent : Photon.MonoBehaviour
 
     // Internal
     [PunRPC]
-    void NetSetFlag(EFlag inFlag, bool inState, float inDuration = 0.0f)
+    void NetSetFlag(EWeaponFlag inFlag, bool inState, float inDuration = 0.0f)
     {
         _flags[inFlag] = inState;
 
@@ -58,15 +59,14 @@ public class WeaponFlagComponent : Photon.MonoBehaviour
             Timing.KillCoroutines(_flagHandles[inFlag]);
     }
 
-    IEnumerator<float> HandleDuration(EFlag inFlag, float inDuration, bool inState)
+    IEnumerator<float> HandleDuration(EWeaponFlag inFlag, float inDuration, bool inState)
     {
         yield return Timing.WaitForSeconds(inDuration);
         SetFlag(inFlag, !inState);
     }
 }
 
-
-public enum EFlag
+public enum EWeaponFlag
 {
     Reloading
 }

@@ -5,10 +5,11 @@ using MEC;
 
 public class WeaponExternalAmmoComponent : WeaponAmmoComponent
 {
-    [SerializeField] float _reloadTime = 1.0f;
-    [SerializeField] int _maxAmmo = 30;
+    [SerializeField] Stats _stats;
+    public Stats stats => _stats;
 
     int _currentAmmo;
+    public int currentAmmo => _currentAmmo;
 
     CoroutineHandle _reloadHandle;
 
@@ -19,9 +20,10 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
     {
         _weapon = GetComponent<Weapon>();
 
-        _currentAmmo = _maxAmmo;
+        _currentAmmo = _stats.maxAmmo;
 
         _weapon.OnDropped += CancelReload;
+        _weapon.fireComponent.OnFire += () => _currentAmmo--;
 
         base.ManualAwake();
     }
@@ -33,7 +35,7 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
 
     public override void TryReload()
     {
-        if (_currentAmmo < _maxAmmo)
+        if (_currentAmmo < _stats.maxAmmo)
             _reloadHandle = Timing.RunCoroutineSingleton(_HandleReload(), _reloadHandle, SingletonBehavior.Abort);
     }
 
@@ -41,18 +43,22 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
     {
         TryInvokeOnReloadStart();
 
-        _weapon.flagComponent.SetFlag(EFlag.Reloading, true);
-        yield return Timing.WaitForSeconds(_reloadTime);
-        _weapon.flagComponent.SetFlag(EFlag.Reloading, false);
+        yield return Timing.WaitForSeconds(_stats.reloadTime);
 
-        _currentAmmo = _maxAmmo;
+        _currentAmmo = _stats.maxAmmo;
 
-        TryInvokeOnReloadFinish();
+        TryInvokeOnReloadStop();
     }
 
     void CancelReload()
     {
         Timing.KillCoroutines(_reloadHandle);
-        _weapon.flagComponent.SetFlag(EFlag.Reloading, false);
+        TryInvokeOnReloadStop();
+    }
+
+    public struct Stats
+    {
+        public float reloadTime;
+        public int   maxAmmo;
     }
 }

@@ -6,7 +6,7 @@ using System;
 public abstract class WeaponAmmoComponent : MonoBehaviour
 {
     public event Action OnReloadStart;
-    public event Action OnReloadFinish;
+    public event Action OnReloadStop;
 
     public virtual void ManualAwake() { }
     
@@ -20,8 +20,8 @@ public abstract class WeaponAmmoComponent : MonoBehaviour
         OnReloadStart?.Invoke();
     }
 
-    protected void TryInvokeOnReloadFinish()
+    protected void TryInvokeOnReloadStop()
     {
-        OnReloadFinish?.Invoke();
+        OnReloadStop?.Invoke();
     }
 }
