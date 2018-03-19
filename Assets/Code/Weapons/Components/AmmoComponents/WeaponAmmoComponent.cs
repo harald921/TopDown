@@ -8,7 +8,6 @@ public abstract class WeaponAmmoComponent : MonoBehaviour
     public event Action OnReloadStart;
     public event Action OnReloadFinish;
 
-
     public virtual void ManualAwake() { }
     
     public virtual void TryReload() { }

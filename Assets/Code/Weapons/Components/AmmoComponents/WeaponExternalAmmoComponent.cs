@@ -10,16 +10,18 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
 
     int _currentAmmo;
 
-    WeaponFlagComponent _flagComponent;
-
     CoroutineHandle _reloadHandle;
+
+    Weapon _weapon;
 
 
     public override void ManualAwake()
     {
+        _weapon = GetComponent<Weapon>();
+
         _currentAmmo = _maxAmmo;
 
-        _flagComponent = GetComponent<WeaponFlagComponent>();
+        _weapon.OnDropped += CancelReload;
 
         base.ManualAwake();
     }
@@ -39,12 +41,18 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
     {
         TryInvokeOnReloadStart();
 
-        _flagComponent.SetFlag(EFlag.Reloading, true);
+        _weapon.flagComponent.SetFlag(EFlag.Reloading, true);
         yield return Timing.WaitForSeconds(_reloadTime);
-        _flagComponent.SetFlag(EFlag.Reloading, false);
+        _weapon.flagComponent.SetFlag(EFlag.Reloading, false);
 
         _currentAmmo = _maxAmmo;
 
         TryInvokeOnReloadFinish();
+    }
+
+    void CancelReload()
+    {
+        Timing.KillCoroutines(_reloadHandle);
+        _weapon.flagComponent.SetFlag(EFlag.Reloading, false);
     }
 }
