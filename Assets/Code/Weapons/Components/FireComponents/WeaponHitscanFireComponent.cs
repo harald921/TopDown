@@ -6,7 +6,6 @@ using MEC;
 public class WeaponHitscanFireComponent : WeaponFireComponent
 {
     [SerializeField] GameObject      _tracerPrefab;
-    [SerializeField] LayerMask       _collidesWith;
     [SerializeField] ProjectileStats _projectileStats;
 
 
@@ -21,7 +20,7 @@ public class WeaponHitscanFireComponent : WeaponFireComponent
             SpawnTracer(hitPoints);
         }
 
-        hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, _projectileStats.damage, _projectileStats._type);
+        hitCollider?.GetComponent<PlayerHealthComponent>()?.photonView.RPC("DealDamage", PhotonTargets.All, _projectileStats.damage, _projectileStats.type);
 
         TryInvokeOnFire();
     }
@@ -36,7 +35,7 @@ public class WeaponHitscanFireComponent : WeaponFireComponent
         };
 
         RaycastHit hit;
-        if (Physics.Raycast(_weapon.muzzleTransform.position, projectileDirection, out hit, _projectileStats.range, _collidesWith))
+        if (Physics.Raycast(_weapon.muzzleTransform.position, projectileDirection, out hit, _projectileStats.range, _projectileStats.collidesWith))
             outHitPoints.Add(hit.point);
         else
             outHitPoints.Add(_weapon.muzzleTransform.position + (projectileDirection * _projectileStats.range));
@@ -46,7 +45,7 @@ public class WeaponHitscanFireComponent : WeaponFireComponent
 
     Collider MuzzleOverlapSphere()
     {
-        Collider[] collidersCoveringMuzzle = Physics.OverlapSphere(_weapon.muzzleTransform.position, float.Epsilon, _collidesWith);
+        Collider[] collidersCoveringMuzzle = Physics.OverlapSphere(_weapon.muzzleTransform.position, float.Epsilon, _projectileStats.collidesWith);
         if (collidersCoveringMuzzle.Length > 0)
             return collidersCoveringMuzzle[0];
         else
@@ -63,8 +62,9 @@ public class WeaponHitscanFireComponent : WeaponFireComponent
     [System.Serializable]
     public struct ProjectileStats
     {
-        public Weapon.Type _type;
         public int damage;
         public float range;
+        public Weapon.Type type;
+        public LayerMask collidesWith;
     }
 }

@@ -39,7 +39,9 @@ GameObject:
   - component: {fileID: 64445061814802406}
   - component: {fileID: 114252649325028110}
   - component: {fileID: 54854666182836264}
-  - component: {fileID: 114105715866542166}
+  - component: {fileID: 114526758748216528}
+  - component: {fileID: 114424688962556012}
+  - component: {fileID: 114957571501365218}
   m_Layer: 12
   m_Name: AssaultRifle
   m_TagString: Untagged
@@ -144,35 +146,6 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 641c99dcb785a8d4c8a6067a95531a67, type: 3}
---- !u!114 &114105715866542166
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1794909459160882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3687de2212a8e9947867c5d5792cad2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _muzzleTransform: {fileID: 4037923348010908}
-  _stats:
-    name: Assault Rifle
-    fireTime: 0.07
-    spread: 0.03
-    recoilMoveSlow: 0.04
-    maxAmmo: 30
-    reloadTime: 3
-  _tracerPrefab: {fileID: 1021562394695872, guid: 8b6902d4efb7d6341b20528f93d33d7c,
-    type: 2}
-  _collidesWith:
-    serializedVersion: 2
-    m_Bits: 35840
-  _projectileStats:
-    _type: 1
-    damage: 4
-    range: 40
-  _semiAuto: 0
 --- !u!114 &114252649325028110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -199,3 +172,51 @@ MonoBehaviour:
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
+--- !u!114 &114424688962556012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1794909459160882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d06ded1bae79c84c99b8d38ec5b7920, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stats:
+    reloadTime: 2
+    maxAmmo: 30
+--- !u!114 &114526758748216528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1794909459160882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c616940fd5ef6b4181af59250ab97bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stats:
+    name: Assault Rifle
+  _muzzleTransform: {fileID: 4037923348010908}
+--- !u!114 &114957571501365218
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1794909459160882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff9e4e773d3abb24c83e4575d64affb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tracerPrefab: {fileID: 1021562394695872, guid: 8b6902d4efb7d6341b20528f93d33d7c,
+    type: 2}
+  _collidesWith:
+    serializedVersion: 2
+    m_Bits: 35840
+  _projectileStats:
+    _type: 1
+    damage: 3
+    range: 40

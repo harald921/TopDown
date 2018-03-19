@@ -56,6 +56,7 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
         TryInvokeOnReloadStop();
     }
 
+    [System.Serializable]
     public struct Stats
     {
         public float reloadTime;

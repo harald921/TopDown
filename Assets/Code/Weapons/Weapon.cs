@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Weapon : Photon.MonoBehaviour
+public class Weapon : Photon.MonoBehaviour
 {
     [SerializeField] Stats _stats;
     public Stats stats => _stats;
@@ -39,6 +39,7 @@ public abstract class Weapon : Photon.MonoBehaviour
     void InvokeManualAwakes()
     {
         ammoComponent.ManualAwake();
+        fireComponent.ManualAwake();
         flagComponent.ManualAwake();
     }
 

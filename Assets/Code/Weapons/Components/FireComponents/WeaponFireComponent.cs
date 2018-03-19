@@ -67,7 +67,7 @@ public abstract class WeaponFireComponent : MonoBehaviour
         return _weapon.muzzleTransform.forward + projectileSpread;
     }
 
-
+    [Serializable]
     public struct Stats
     {
         public FireMode fireMode;

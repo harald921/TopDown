@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class NetworkManager : Photon.MonoBehaviour
 {
+    [SerializeField] bool _debugMessages = false;
     const string _gameVersion = "0.01";
 
     void Awake()
@@ -23,7 +24,7 @@ public class NetworkManager : Photon.MonoBehaviour
     void OnConnectedToMaster()
     {
         JoinRoom();
-        Debug.Log("Connected to Photon");
+        if (_debugMessages) Debug.Log("Connected to Photon");
     }
 
     void JoinRoom()
@@ -33,12 +34,12 @@ public class NetworkManager : Photon.MonoBehaviour
 
     void OnCreatedRoom()
     {
-        Debug.Log("No room exists, creating new");
+        if (_debugMessages) Debug.Log("No room exists, creating new");
     }
 
     void OnJoinedRoom()
     {
-        Debug.Log("Connected to Room");
+        if (_debugMessages) Debug.Log("Connected to Room");
         PhotonNetwork.Instantiate("Player", Vector3.up, Quaternion.identity, 0);
     }
 

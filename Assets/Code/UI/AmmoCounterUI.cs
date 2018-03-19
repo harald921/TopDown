@@ -16,6 +16,7 @@ public class AmmoCounterUI : MonoBehaviour
 
     public void Initialize(PlayerWeaponComponent inWeaponComponent)
     {
+        gameObject.SetActive(false);
     //    _weaponComponent = inWeaponComponent;
     //
     //    if (_weaponComponent.heldWeapon)
