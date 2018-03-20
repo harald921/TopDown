@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 114526758748216528}
   - component: {fileID: 114424688962556012}
   - component: {fileID: 114957571501365218}
+  - component: {fileID: 114377463988474948}
   m_Layer: 12
   m_Name: AssaultRifle
   m_TagString: Untagged
@@ -172,6 +173,17 @@ MonoBehaviour:
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
+--- !u!114 &114377463988474948
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1794909459160882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8bf8ab924223894ab7b81bee2b7a4dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114424688962556012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -211,12 +223,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff9e4e773d3abb24c83e4575d64affb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stats:
+    fireMode: 2
+    fireTime: 0.1
+    spread: 0.09
+    recoilMoveSlow: 0.08
   _tracerPrefab: {fileID: 1021562394695872, guid: 8b6902d4efb7d6341b20528f93d33d7c,
     type: 2}
-  _collidesWith:
-    serializedVersion: 2
-    m_Bits: 35840
   _projectileStats:
-    _type: 1
     damage: 3
     range: 40
+    type: 1
+    collidesWith:
+      serializedVersion: 2
+      m_Bits: 35840
