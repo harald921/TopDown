@@ -74,7 +74,10 @@ GameObject:
   - component: {fileID: 54941043165848292}
   - component: {fileID: 65003103590894330}
   - component: {fileID: 33249700412826622}
-  - component: {fileID: 114374263869586262}
+  - component: {fileID: 114767994016477956}
+  - component: {fileID: 114629125378434888}
+  - component: {fileID: 114393327217365942}
+  - component: {fileID: 114270416148530000}
   m_Layer: 12
   m_Name: PlasmaRifle
   m_TagString: Untagged
@@ -349,7 +352,7 @@ MonoBehaviour:
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
---- !u!114 &114374263869586262
+--- !u!114 &114270416148530000
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -357,20 +360,54 @@ MonoBehaviour:
   m_GameObject: {fileID: 1400414977223236}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26482e9c33d97b947aa70b9016227790, type: 3}
+  m_Script: {fileID: 11500000, guid: c8bf8ab924223894ab7b81bee2b7a4dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 2
-  _muzzleTransform: {fileID: 4819141803248516}
+--- !u!114 &114393327217365942
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1400414977223236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2cd1c0dbbee8334ca4bf058211a824b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _stats:
-    name: Pulse Rifle
-    damage: 6
-    fireTime: 0.15
-    spread: 0.06
-    recoilMoveSlow: 0.05
-    maxAmmo: 20
-    reloadTime: 3
+    fireMode: 2
+    fireTime: 0.09
+    spread: 0.05
+    recoilMoveSlow: 0
   _projectilePrefab: {fileID: 1932406060625188, guid: fdcddf579cbd7ab4580f45d2fab4458f,
     type: 2}
   _specificStats:
-    projectileSpeed: 110
+    projectileSpeed: 140
+--- !u!114 &114629125378434888
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1400414977223236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d06ded1bae79c84c99b8d38ec5b7920, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stats:
+    reloadTime: 2
+    maxAmmo: 20
+--- !u!114 &114767994016477956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1400414977223236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c616940fd5ef6b4181af59250ab97bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stats:
+    name: Plasma Rifle
+  _muzzleTransform: {fileID: 4819141803248516}
