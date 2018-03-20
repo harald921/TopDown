@@ -12,19 +12,15 @@ public class WeaponInternalAmmoComponent : WeaponAmmoComponent
 
     CoroutineHandle _reloadHandle;
 
-    Weapon _weapon;
-
 
     public override void ManualAwake()
     {
-        _weapon = GetComponent<Weapon>();
+        base.ManualAwake();
 
         _currentAmmo = _maxAmmo;
 
         _weapon.OnDropped += CancelReload;
         _weapon.fireComponent.OnFire += () => _currentAmmo--;
-
-        base.ManualAwake();
     }
 
     public override bool HasAmmo()

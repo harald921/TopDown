@@ -17,6 +17,7 @@ public class Weapon : Photon.MonoBehaviour
 
     PlayerInputComponent _inputComponent;
     public PlayerInputComponent inputComponent => _inputComponent;
+    public bool hasOwner => inputComponent;
 
     public event Action OnDropped;
     public event Action OnPickedUp;
@@ -45,6 +46,7 @@ public class Weapon : Photon.MonoBehaviour
 
     void InvokeManualUpdates()
     {
+        ammoComponent.ManualUpdate();
         fireComponent.ManualUpdate();
     }
 

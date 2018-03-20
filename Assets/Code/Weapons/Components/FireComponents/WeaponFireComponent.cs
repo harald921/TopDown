@@ -23,9 +23,10 @@ public abstract class WeaponFireComponent : MonoBehaviour
 
     public void ManualUpdate()
     {
-        if (!_weapon.inputComponent)
+        if (!_weapon.hasOwner)
             return;
 
+        Debug.Log("TODO: Add check for firing flag here");
         if (_weapon.inputComponent.input.weaponTriggerPulled)
         {
             if (_weapon.ammoComponent.HasAmmo())
