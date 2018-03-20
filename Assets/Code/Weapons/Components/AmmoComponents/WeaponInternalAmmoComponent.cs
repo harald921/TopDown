@@ -46,6 +46,7 @@ public class WeaponInternalAmmoComponent : WeaponAmmoComponent
         {
             yield return Timing.WaitForSeconds(_reloadTime);
             _currentAmmo++;
+            Debug.Log("Added ammo: " + _currentAmmo);
         }
 
 
