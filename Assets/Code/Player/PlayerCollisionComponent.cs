@@ -32,7 +32,6 @@ public class PlayerCollisionComponent : MonoBehaviour
     {
         foreach (Collider hitCollider in hitColliders)
         {
-            // Skip the collider if the layermask doesn't contain its layer
             if (!_collidesWith.Contains(hitCollider.gameObject.layer))
                 continue;
 
