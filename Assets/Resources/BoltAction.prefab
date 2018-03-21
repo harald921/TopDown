@@ -178,7 +178,8 @@ MonoBehaviour:
   onSerializeTransformOption: 3
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
@@ -195,8 +196,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c312a657fe5f54499f62b853b2e9615, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _reloadTime: 1
-  _maxAmmo: 3
+  _stats:
+    reloadTime: 1
+    maxAmmo: 5
 --- !u!114 &114506670734440468
 MonoBehaviour:
   m_ObjectHideFlags: 1
