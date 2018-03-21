@@ -26,17 +26,22 @@ public abstract class WeaponFireComponent : MonoBehaviour
         if (!_weapon.hasOwner)
             return;
 
-        Debug.Log("TODO: Add check for firing flag here");
-        if (_weapon.inputComponent.input.weaponTriggerPulled)
+        bool triggerPulled = _weapon.inputComponent.input.weaponTriggerPulled;
+        bool isFiring      = _weapon.flagComponent.GetFlag(EWeaponFlag.Firing);
+
+        if (triggerPulled && !isFiring)
         {
+            bool isReloading = _weapon.flagComponent.GetFlag(EWeaponFlag.Reloading);
+            if (isReloading)
+                return;
+
             if (_weapon.ammoComponent.hasAmmo)
-            {
-                if (!_weapon.flagComponent.GetFlag(EWeaponFlag.Reloading))
-                    _fireHandle = Timing.RunCoroutineSingleton(_HandleFire(), _fireHandle, SingletonBehavior.Abort);
-            }
+                _fireHandle = Timing.RunCoroutineSingleton(_HandleFire(), _fireHandle, SingletonBehavior.Abort);
 
             else
+            {
                 _weapon.ammoComponent.TryReload();
+            }
         }
     }
 
@@ -44,10 +49,10 @@ public abstract class WeaponFireComponent : MonoBehaviour
     {
         Fire();
 
+        yield return Timing.WaitForSeconds(_stats.fireTime);
+
         while (_stats.fireMode == FireMode.Semi && _weapon.inputComponent.input.weaponTriggerPulled)
             yield return Timing.WaitForOneFrame;
-
-        yield return Timing.WaitForSeconds(_stats.fireTime);
     }
 
     protected abstract void Fire();
