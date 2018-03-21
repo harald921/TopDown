@@ -33,14 +33,10 @@ public class AmmoCounterUI : MonoBehaviour
     {
         _weaponComponent.OnWeaponPickedUp += (Weapon inPickedUpWeapon) => 
         {
-            inPickedUpWeapon.fireComponent.OnFire += () => {
-                StopAndHideReloadAnimation();
-                UpdateText();
-            };
-
+            inPickedUpWeapon.fireComponent.OnFire         += UpdateText;
             inPickedUpWeapon.ammoComponent.OnReloadStart  += RunReloadAnimation;
             inPickedUpWeapon.ammoComponent.OnReloadStop   += UpdateText;
-
+    
             Show();
         };
     
@@ -59,6 +55,7 @@ public class AmmoCounterUI : MonoBehaviour
         float timer = 0;
         while (timer < reloadTime)
         {
+            // Progress the reload animation bar fill
             float progress = Mathf.InverseLerp(0, reloadTime, timer);
     
             _reloadProgressBar.fillAmount = progress;

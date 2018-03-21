@@ -17,22 +17,13 @@ public abstract class WeaponAmmoComponent : MonoBehaviour
     public event Action OnReloadStart;
     public event Action OnReloadStop;
 
-    protected void TryInvokeOnReloadStart() => OnReloadStart?.Invoke();
-    protected void TryInvokeOnReloadStop()
-    {
-        OnReloadStop?.Invoke();
-        Debug.Log("stopping reload");
-    }
-
 
     public virtual void ManualAwake()
     {
         _weapon = GetComponent<Weapon>();
-
-        _currentAmmo = stats.maxAmmo;
     }
 
-    public virtual void ManualUpdate()
+    public void ManualUpdate()
     {
         if (!_weapon.hasOwner)
             return;
@@ -42,6 +33,17 @@ public abstract class WeaponAmmoComponent : MonoBehaviour
     }
 
     public abstract void TryReload();
+
+
+    protected void TryInvokeOnReloadStart()
+    {
+        OnReloadStart?.Invoke();
+    }
+
+    protected void TryInvokeOnReloadStop()
+    {
+        OnReloadStop?.Invoke();
+    }
 
 
     [Serializable]

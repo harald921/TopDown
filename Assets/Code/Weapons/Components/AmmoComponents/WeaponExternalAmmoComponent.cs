@@ -11,7 +11,9 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
     {
         base.ManualAwake();
 
-        _weapon.OnDropped += StopReload;
+        _currentAmmo = stats.maxAmmo;
+
+        _weapon.OnDropped += CancelReload;
         _weapon.fireComponent.OnFire += () => _currentAmmo--;
     }
 
@@ -32,7 +34,7 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
         TryInvokeOnReloadStop();
     }
 
-    void StopReload()
+    void CancelReload()
     {
         Timing.KillCoroutines(_reloadHandle);
         TryInvokeOnReloadStop();
