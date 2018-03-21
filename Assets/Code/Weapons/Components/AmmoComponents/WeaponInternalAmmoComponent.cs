@@ -47,8 +47,9 @@ public class WeaponInternalAmmoComponent : WeaponAmmoComponent
     void CheckForReloadCancel()
     {
         bool triggerPulled = _weapon.inputComponent.input.weaponTriggerPulled;
+        bool waitingForTriggerRelease = _weapon.flagComponent.GetFlag(EWeaponFlag.WaitingForTriggerRelease);
 
-        if (_weapon.inputComponent.input.weaponTriggerPulled)
+        if (triggerPulled && hasAmmo && !waitingForTriggerRelease)
             if (_reloadHandle.IsRunning)
                 StopReload();
     }

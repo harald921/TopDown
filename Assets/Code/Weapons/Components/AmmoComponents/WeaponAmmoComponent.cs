@@ -18,11 +18,7 @@ public abstract class WeaponAmmoComponent : MonoBehaviour
     public event Action OnReloadStop;
 
     protected void TryInvokeOnReloadStart() => OnReloadStart?.Invoke();
-    protected void TryInvokeOnReloadStop()
-    {
-        OnReloadStop?.Invoke();
-        Debug.Log("stopping reload");
-    }
+    protected void TryInvokeOnReloadStop()  => OnReloadStop?.Invoke();
 
 
     public virtual void ManualAwake()

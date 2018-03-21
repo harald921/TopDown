@@ -26,22 +26,26 @@ public abstract class WeaponFireComponent : MonoBehaviour
         if (!_weapon.hasOwner)
             return;
 
-        bool triggerPulled = _weapon.inputComponent.input.weaponTriggerPulled;
-        bool isFiring      = _weapon.flagComponent.GetFlag(EWeaponFlag.Firing);
+        HandleInput();
+    }
 
-        if (triggerPulled && !isFiring)
-        {
-            bool isReloading = _weapon.flagComponent.GetFlag(EWeaponFlag.Reloading);
-            if (isReloading)
+    void HandleInput()
+    {
+        bool triggerPulled = _weapon.inputComponent.input.weaponTriggerPulled;
+        if (triggerPulled)
+        { 
+            if (_weapon.flagComponent.GetFlag(EWeaponFlag.Reloading))
+                return;
+
+            if (_weapon.flagComponent.GetFlag(EWeaponFlag.WaitingForTriggerRelease))
                 return;
 
             if (_weapon.ammoComponent.hasAmmo)
                 _fireHandle = Timing.RunCoroutineSingleton(_HandleFire(), _fireHandle, SingletonBehavior.Abort);
 
             else
-            {
                 _weapon.ammoComponent.TryReload();
-            }
+
         }
     }
 
@@ -50,9 +54,16 @@ public abstract class WeaponFireComponent : MonoBehaviour
         Fire();
 
         yield return Timing.WaitForSeconds(_stats.fireTime);
+    }
 
+    IEnumerator<float> _HandleTriggerRelease()
+    {
+        Debug.Log("TODO: USE THIS!");
+        _weapon.flagComponent.SetFlag(EWeaponFlag.WaitingForTriggerRelease, true);
         while (_stats.fireMode == FireMode.Semi && _weapon.inputComponent.input.weaponTriggerPulled)
             yield return Timing.WaitForOneFrame;
+
+        _weapon.flagComponent.SetFlag(EWeaponFlag.WaitingForTriggerRelease, false);
     }
 
     protected abstract void Fire();
