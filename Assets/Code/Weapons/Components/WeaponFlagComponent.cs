@@ -27,6 +27,9 @@ public class WeaponFlagComponent : Photon.MonoBehaviour
 
         weapon.ammoComponent.OnReloadStart += () => SetFlag(EWeaponFlag.Reloading, true);
         weapon.ammoComponent.OnReloadStop  += () => SetFlag(EWeaponFlag.Reloading, false);
+
+        weapon.ammoComponent.OnReloadStart += () => Debug.Log("Setting reload flag to true");
+        weapon.ammoComponent.OnReloadStop += () => Debug.Log("Setting reload flag to false");
     }
 
     // External
@@ -68,5 +71,6 @@ public class WeaponFlagComponent : Photon.MonoBehaviour
 
 public enum EWeaponFlag
 {
-    Reloading
+    Reloading,
+    Firing
 }

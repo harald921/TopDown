@@ -1,14 +1,4 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-#if !UNITY_4_6 && !UNITY_4_7 && !UNITY_5_0 && !UNITY_5_1 && !UNITY_5_2
-using UnityEngine.Assertions;
-#endif
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-#if UNITY_5_5_OR_NEWER
-using UnityEngine.Profiling;
-#endif
+﻿using System.Collections.Generic;
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 //                              More Effective Coroutines Pro
@@ -27,7 +17,7 @@ using UnityEngine.Profiling;
 
 namespace MEC
 {
-    public class Timing : MonoBehaviour
+    public class Timing
     {
         /// <summary>
         /// The time between calls to SlowUpdate.
