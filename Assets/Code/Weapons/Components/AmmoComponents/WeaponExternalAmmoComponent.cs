@@ -5,34 +5,21 @@ using MEC;
 
 public class WeaponExternalAmmoComponent : WeaponAmmoComponent
 {
-    [SerializeField] Stats _stats;
-    public Stats stats => _stats;
-
-    int _currentAmmo;
-    public int currentAmmo => _currentAmmo;
-
     CoroutineHandle _reloadHandle;
-
-
 
     public override void ManualAwake()
     {
         base.ManualAwake();
 
-        _currentAmmo = _stats.maxAmmo;
+        _currentAmmo = stats.maxAmmo;
 
         _weapon.OnDropped += CancelReload;
         _weapon.fireComponent.OnFire += () => _currentAmmo--;
     }
 
-    public override bool HasAmmo()
-    {
-        return _currentAmmo > 0;
-    }
-
     public override void TryReload()
     {
-        if (_currentAmmo < _stats.maxAmmo)
+        if (_currentAmmo < stats.maxAmmo)
             _reloadHandle = Timing.RunCoroutineSingleton(_HandleReload(), _reloadHandle, SingletonBehavior.Abort);
     }
 
@@ -40,9 +27,9 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
     {
         TryInvokeOnReloadStart();
 
-        yield return Timing.WaitForSeconds(_stats.reloadTime);
+        yield return Timing.WaitForSeconds(stats.reloadTime);
 
-        _currentAmmo = _stats.maxAmmo;
+        _currentAmmo = stats.maxAmmo;
 
         TryInvokeOnReloadStop();
     }
@@ -51,12 +38,5 @@ public class WeaponExternalAmmoComponent : WeaponAmmoComponent
     {
         Timing.KillCoroutines(_reloadHandle);
         TryInvokeOnReloadStop();
-    }
-
-    [System.Serializable]
-    public struct Stats
-    {
-        public float reloadTime;
-        public int   maxAmmo;
     }
 }

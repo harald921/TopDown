@@ -88,6 +88,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -420,6 +421,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 366249499}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &398687577 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114736807586021508, guid: b51b77c4f8a23b24ba6d1d9457a89a56,
+    type: 2}
+  m_PrefabInternal: {fileID: 1888178362}
+  m_Script: {fileID: 1453722849, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
+--- !u!114 &428973904 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114761786488563262, guid: b51b77c4f8a23b24ba6d1d9457a89a56,
+    type: 2}
+  m_PrefabInternal: {fileID: 1888178362}
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!4 &458680878 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4925451595780638, guid: dfe504d8fadf68d4094366480f559a50,
@@ -1965,6 +1978,16 @@ Prefab:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114662886658820870, guid: b51b77c4f8a23b24ba6d1d9457a89a56,
+        type: 2}
+      propertyPath: _text
+      value: 
+      objectReference: {fileID: 398687577}
+    - target: {fileID: 114662886658820870, guid: b51b77c4f8a23b24ba6d1d9457a89a56,
+        type: 2}
+      propertyPath: _reloadProgressBar
+      value: 
+      objectReference: {fileID: 428973904}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b51b77c4f8a23b24ba6d1d9457a89a56, type: 2}
   m_IsPrefabParent: 0

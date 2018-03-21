@@ -5,6 +5,13 @@ using System;
 
 public abstract class WeaponAmmoComponent : MonoBehaviour
 {
+    [SerializeField] Stats _stats;
+    public Stats stats => _stats;
+
+    protected int _currentAmmo;
+    public int currentAmmo => _currentAmmo;
+    public bool hasAmmo => _currentAmmo > 0;
+
     protected Weapon _weapon;
 
     public event Action OnReloadStart;
@@ -25,9 +32,7 @@ public abstract class WeaponAmmoComponent : MonoBehaviour
             _weapon.ammoComponent.TryReload();
     }
 
-    public virtual void TryReload() { }
-
-    public abstract bool HasAmmo();
+    public abstract void TryReload();
 
 
     protected void TryInvokeOnReloadStart()
@@ -38,5 +43,13 @@ public abstract class WeaponAmmoComponent : MonoBehaviour
     protected void TryInvokeOnReloadStop()
     {
         OnReloadStop?.Invoke();
+    }
+
+
+    [Serializable]
+    public struct Stats
+    {
+        public float reloadTime;
+        public int maxAmmo;
     }
 }

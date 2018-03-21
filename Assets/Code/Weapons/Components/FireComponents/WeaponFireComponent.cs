@@ -29,7 +29,7 @@ public abstract class WeaponFireComponent : MonoBehaviour
         Debug.Log("TODO: Add check for firing flag here");
         if (_weapon.inputComponent.input.weaponTriggerPulled)
         {
-            if (_weapon.ammoComponent.HasAmmo())
+            if (_weapon.ammoComponent.hasAmmo)
             {
                 if (!_weapon.flagComponent.GetFlag(EWeaponFlag.Reloading))
                     _fireHandle = Timing.RunCoroutineSingleton(_HandleFire(), _fireHandle, SingletonBehavior.Abort);

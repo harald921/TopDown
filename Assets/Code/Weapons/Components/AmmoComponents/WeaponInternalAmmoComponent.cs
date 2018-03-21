@@ -5,32 +5,21 @@ using MEC;
 
 public class WeaponInternalAmmoComponent : WeaponAmmoComponent
 {
-    [SerializeField] float _reloadTime = 1.0f;
-    [SerializeField] int _maxAmmo = 30;
-
-    int _currentAmmo;
-
     CoroutineHandle _reloadHandle;
-
 
     public override void ManualAwake()
     {
         base.ManualAwake();
 
-        _currentAmmo = _maxAmmo;
+        _currentAmmo = stats.maxAmmo;
 
         _weapon.OnDropped += CancelReload;
         _weapon.fireComponent.OnFire += () => _currentAmmo--;
     }
 
-    public override bool HasAmmo()
-    {
-        return _currentAmmo > 0;
-    }
-
     public override void TryReload()
     {
-        if (_currentAmmo < _maxAmmo)
+        if (_currentAmmo < stats.maxAmmo)
             _reloadHandle = Timing.RunCoroutineSingleton(_HandleReload(), _reloadHandle, SingletonBehavior.Abort);
     }
 
@@ -38,14 +27,11 @@ public class WeaponInternalAmmoComponent : WeaponAmmoComponent
     {
         TryInvokeOnReloadStart();
 
-        while (_currentAmmo < _maxAmmo)
+        while (_currentAmmo < stats.maxAmmo)
         {
-            yield return Timing.WaitForSeconds(_reloadTime);
+            yield return Timing.WaitForSeconds(stats.reloadTime);
             _currentAmmo++;
-            Debug.Log("Added ammo: " + _currentAmmo);
         }
-
-
 
         TryInvokeOnReloadStop();
     }
